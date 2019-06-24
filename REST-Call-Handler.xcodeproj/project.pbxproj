@@ -14,6 +14,13 @@
 		84A1DB6022B5448100AABF0D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84A1DB5E22B5448100AABF0D /* LaunchScreen.storyboard */; };
 		84A1DB6B22B5448100AABF0D /* REST_Call_HandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1DB6A22B5448100AABF0D /* REST_Call_HandlerTests.swift */; };
 		84A1DB7622B5448100AABF0D /* REST_Call_HandlerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1DB7522B5448100AABF0D /* REST_Call_HandlerUITests.swift */; };
+		84A1DB8422B5469A00AABF0D /* CallHandlerUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1DB8322B5469A00AABF0D /* CallHandlerUser.swift */; };
+		84A1DB8822B546BA00AABF0D /* CallHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1DB8722B546BA00AABF0D /* CallHandler.swift */; };
+		84A1DB8C22B546D800AABF0D /* CallURIAnatomy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1DB8B22B546D800AABF0D /* CallURIAnatomy.swift */; };
+		84A1DB8E22B569DF00AABF0D /* CallLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1DB8D22B569DF00AABF0D /* CallLog.swift */; };
+		84A1DB9022B5750400AABF0D /* CallOutcomes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1DB8F22B5750400AABF0D /* CallOutcomes.swift */; };
+		84A1DB9422B7DA3600AABF0D /* GroupProgressIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1DB9322B7DA3600AABF0D /* GroupProgressIndicator.swift */; };
+		84A1DB9722B94F7E00AABF0D /* CallActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1DB9622B94F7E00AABF0D /* CallActivityIndicator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +54,13 @@
 		84A1DB7122B5448100AABF0D /* REST-Call-HandlerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "REST-Call-HandlerUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		84A1DB7522B5448100AABF0D /* REST_Call_HandlerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = REST_Call_HandlerUITests.swift; sourceTree = "<group>"; };
 		84A1DB7722B5448100AABF0D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		84A1DB8322B5469A00AABF0D /* CallHandlerUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallHandlerUser.swift; sourceTree = "<group>"; };
+		84A1DB8722B546BA00AABF0D /* CallHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallHandler.swift; sourceTree = "<group>"; };
+		84A1DB8B22B546D800AABF0D /* CallURIAnatomy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallURIAnatomy.swift; sourceTree = "<group>"; };
+		84A1DB8D22B569DF00AABF0D /* CallLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallLog.swift; sourceTree = "<group>"; };
+		84A1DB8F22B5750400AABF0D /* CallOutcomes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallOutcomes.swift; sourceTree = "<group>"; };
+		84A1DB9322B7DA3600AABF0D /* GroupProgressIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupProgressIndicator.swift; sourceTree = "<group>"; };
+		84A1DB9622B94F7E00AABF0D /* CallActivityIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallActivityIndicator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,7 +111,13 @@
 		84A1DB5422B5448000AABF0D /* REST-Call-Handler */ = {
 			isa = PBXGroup;
 			children = (
+				84A1DB9122B7D9FF00AABF0D /* UserInterface */,
 				84A1DB5522B5448000AABF0D /* AppDelegate.swift */,
+				84A1DB8D22B569DF00AABF0D /* CallLog.swift */,
+				84A1DB8722B546BA00AABF0D /* CallHandler.swift */,
+				84A1DB8F22B5750400AABF0D /* CallOutcomes.swift */,
+				84A1DB8322B5469A00AABF0D /* CallHandlerUser.swift */,
+				84A1DB8B22B546D800AABF0D /* CallURIAnatomy.swift */,
 				84A1DB5722B5448000AABF0D /* ViewController.swift */,
 				84A1DB5922B5448000AABF0D /* Main.storyboard */,
 				84A1DB5C22B5448100AABF0D /* Assets.xcassets */,
@@ -123,6 +143,31 @@
 				84A1DB7722B5448100AABF0D /* Info.plist */,
 			);
 			path = "REST-Call-HandlerUITests";
+			sourceTree = "<group>";
+		};
+		84A1DB9122B7D9FF00AABF0D /* UserInterface */ = {
+			isa = PBXGroup;
+			children = (
+				84A1DB9522B94F4F00AABF0D /* ActivityIndicator */,
+				84A1DB9222B7DA1800AABF0D /* ProgressIndicator */,
+			);
+			path = UserInterface;
+			sourceTree = "<group>";
+		};
+		84A1DB9222B7DA1800AABF0D /* ProgressIndicator */ = {
+			isa = PBXGroup;
+			children = (
+				84A1DB9322B7DA3600AABF0D /* GroupProgressIndicator.swift */,
+			);
+			path = ProgressIndicator;
+			sourceTree = "<group>";
+		};
+		84A1DB9522B94F4F00AABF0D /* ActivityIndicator */ = {
+			isa = PBXGroup;
+			children = (
+				84A1DB9622B94F7E00AABF0D /* CallActivityIndicator.swift */,
+			);
+			path = ActivityIndicator;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -256,8 +301,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84A1DB9022B5750400AABF0D /* CallOutcomes.swift in Sources */,
+				84A1DB8822B546BA00AABF0D /* CallHandler.swift in Sources */,
+				84A1DB9722B94F7E00AABF0D /* CallActivityIndicator.swift in Sources */,
+				84A1DB8C22B546D800AABF0D /* CallURIAnatomy.swift in Sources */,
 				84A1DB5822B5448000AABF0D /* ViewController.swift in Sources */,
+				84A1DB8E22B569DF00AABF0D /* CallLog.swift in Sources */,
+				84A1DB8422B5469A00AABF0D /* CallHandlerUser.swift in Sources */,
 				84A1DB5622B5448000AABF0D /* AppDelegate.swift in Sources */,
+				84A1DB9422B7DA3600AABF0D /* GroupProgressIndicator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
