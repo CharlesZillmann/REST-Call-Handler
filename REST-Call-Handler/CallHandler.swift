@@ -95,6 +95,16 @@ class CallHandler {
         
     }  //struct CallTask
     
+    
+    //***************************************************************
+    //***************        func callStateChange( calltask  : CallHandler.CallTask, state     : CallHandler.CallStates  )
+    //***************************************************************
+    func callStateChange( calltask  : CallHandler.CallTask, state     : CallHandler.CallStates  ) {
+        DispatchQueue.main.async {
+            self.lgCallQueueUserHooksDelegate?.CallStateChange( calltask  : calltask, state : state )
+        }
+    }  // func callStateChange( calltask  : CallHandler.CallTask, state     : CallHandler.CallStates  )
+    
     //***************************************************************
     //***************        func queueGETStringURI( u : String)
     //***************************************************************
@@ -1116,10 +1126,10 @@ class CallHandler {
         
         for myTask in gGeneralCallsQueue {
             group.enter()
-            lgCallQueueUserHooksDelegate?.CallStateChange( calltask  : myTask, state : CallHandler.CallStates.Executing )
+            self.callStateChange( calltask  : myTask, state : CallHandler.CallStates.Executing )
             
             executeCallTask( task : myTask ) {
-                lgCallQueueUserHooksDelegate?.CallStateChange( calltask  : myTask, state : CallHandler.CallStates.Complete )
+                self.callStateChange( calltask  : myTask, state : CallHandler.CallStates.Complete )
                 group.leave()
             }  // closure executeCallTask
             
@@ -1149,13 +1159,13 @@ class CallHandler {
             
             myExecutionQueue.async {
                 
-                self.lgCallQueueUserHooksDelegate?.CallStateChange( calltask  : myTask, state : CallHandler.CallStates.Waiting )
+                self.callStateChange( calltask  : myTask, state : CallHandler.CallStates.Waiting )
                 self.lgSemaphore?.wait()  // requesting the resource
                 
-                self.lgCallQueueUserHooksDelegate?.CallStateChange( calltask  : myTask, state : CallHandler.CallStates.Executing )
+                self.callStateChange( calltask  : myTask, state : CallHandler.CallStates.Executing )
                 
                 self.executeCallTask( task : myTask ) {
-                    self.lgCallQueueUserHooksDelegate?.CallStateChange( calltask  : myTask, state : CallHandler.CallStates.Complete )
+                    self.callStateChange( calltask  : myTask, state : CallHandler.CallStates.Complete )
                 }  //self.executeCallTask( task : myTask )
                 
             }  // executionQueue.async
@@ -1164,6 +1174,7 @@ class CallHandler {
         
     }  // func executeCallTaskQueueSerially(completionHandler: @escaping (NoteCollection) -> Void)
     
+
 }  // CallHandler
 
 //*************************************************************************************************************************
