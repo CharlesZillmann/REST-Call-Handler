@@ -82,7 +82,7 @@ extension ViewController: UITableViewDataSource {
     //***************        func tableView numberOfRowsInSection
     //***************************************************************
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return lgCallHandlerUser?.lgCallHandler.gGeneralCallsQueue.count  ?? 0
+        return lgCallHandlerUser?.lgCallHandler.lgGeneralCallsQueue.count  ?? 0
     }  // func tableView numberOfRowsInSection
     
     //***************************************************************
@@ -91,8 +91,8 @@ extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell( withIdentifier: "QueuedCallCell", for: indexPath )
-        let myEndpoint : String     = lgCallHandlerUser?.lgCallHandler.gGeneralCallsQueue[indexPath.row].Endpoint ?? ""
-        let myTag      : String     = lgCallHandlerUser?.lgCallHandler.gGeneralCallsQueue[indexPath.row].UsersTag ?? ""
+        let myEndpoint : String     = lgCallHandlerUser?.lgCallHandler.lgGeneralCallsQueue[indexPath.row].Endpoint ?? ""
+        let myTag      : String     = lgCallHandlerUser?.lgCallHandler.lgGeneralCallsQueue[indexPath.row].UsersTag ?? ""
 
         cell.textLabel?.text        = indexPath.row.description + ": " + myTag
         cell.detailTextLabel?.text  = myEndpoint

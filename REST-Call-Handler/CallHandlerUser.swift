@@ -178,7 +178,7 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
     func AllCallsCompleted( callhandler: CallHandler ) {
         let myMsg = """
         -----------------------------------------------------
-        **FYI: AllCallsCompleted ( \(callhandler.gGeneralCallsCompleted.count) of \(callhandler.gGeneralCallsQueue.count) )
+        **FYI: AllCallsCompleted ( \(callhandler.lgGeneralCallsCompleted.count) of \(callhandler.lgGeneralCallsQueue.count) )
         -----------------------------------------------------
         """
         
@@ -190,14 +190,14 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
     //***************        func ClearCallQueue()
     //***************************************************************
     func ClearCallQueue() {
-        lgCallHandler.gGeneralCallsQueue.removeAll()
+        lgCallHandler.lgGeneralCallsQueue.removeAll()
     }  //func ClearCallQueue()
     
     //***************************************************************
     //***************        func MakeCalls()
     //***************************************************************
     func MakeCalls( serial : Bool = true) {
-        lgCallHandler.gGeneralCallsCompleted.removeAll()
+        lgCallHandler.lgGeneralCallsCompleted.removeAll()
 
         lgProgressTarget = Double( lgCallUUIDs.count )
         lgProgressActual = 0
@@ -222,7 +222,7 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
         //    Loading a URL's contents might fail because the site might be down (for example), so it might throw an error. This means you need to wrap the call into a do/catch block.
         //          -1003 "A server with the specified hostname could not be found."
         //Generate an error with URL Creation
-        let myErroredRequest1     : CallRequest     = CallRequest( e: endpoint( s : "http:",
+        let myErroredRequest1     : CallRequest     = CallRequest( e: endpoint( s : "https:",
                                                                         a : authority( user: "", pw: "", h: "dummy.restapiexample.com", p: "" ),
                                                                         r : "/api/v1/un}safe/1",
                                                                         p : path( v : [:],
@@ -237,7 +237,7 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
         //Generate an error with myGetCompletionFunc guard error == nil else
         //    Loading a URL's contents might fail because the site might be down (for example), so it might throw an error. This means you need to wrap the call into a do/catch block.
         //          -1003 "A server with the specified hostname could not be found."
-        let myErroredRequest2     : CallRequest     = CallRequest( e: endpoint( s : "http:",
+        let myErroredRequest2     : CallRequest     = CallRequest( e: endpoint( s : "https:",
                                                                         a : authority( user: "", pw: "", h: "dummy.czx.com", p: "" ),
                                                                         r : "/api/v1/employee/1",
                                                                         p : path( v : [:],
@@ -250,7 +250,7 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
                                                     r : myErroredRequest2 ) ] = CallHandler.CallStates.Queued
         
 
-        let myHEADRequest1     : CallRequest     = CallRequest( e: endpoint( s : "http:",
+        let myHEADRequest1     : CallRequest     = CallRequest( e: endpoint( s : "https:",
                                                                  a : authority( user: "", pw: "", h: "dummy.restapiexample.com", p: "" ),
                                                                  r : "/api/v1/employees",
                                                                  p : path( v : [:],
@@ -262,7 +262,7 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
         lgCallUUIDs[ lgCallHandler.queueURIRequest( t: "Make a successful HEAD Request",
                                                     r : myHEADRequest1 ) ] = CallHandler.CallStates.Queued
         
-        let myHEADRequest2     : CallRequest     = CallRequest( e: endpoint( s : "http:",
+        let myHEADRequest2     : CallRequest     = CallRequest( e: endpoint( s : "https:",
                                                                      a : authority( user: "", pw: "", h: "dummy.restapiexample.com", p: "" ),
                                                                      r : "/api/v1/employeet",
                                                                      p : path( v : [:],
@@ -297,7 +297,7 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
         //    #    Route    Method    Sample Json    Results
         //    1    /employees    GET    -
         // [{"id":"1","employee_name":"","employee_salary":"0","employee_age":"0","profile_image":""},{"id":"2","employee_name":"","employee_salary":"0","employee_age":"0","profile_image":""}]
-        let myRequest1     : CallRequest     = CallRequest( e: endpoint( s : "http:",
+        let myRequest1     : CallRequest     = CallRequest( e: endpoint( s : "https:",
                                                                          a : authority( user: "", pw: "", h: "dummy.restapiexample.com", p: "" ),
                                                                          r : "/api/v1/employees",
                                                                          p : path( v : [:],
@@ -312,7 +312,7 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
         //    Route    Method    Sample Json    Results
         //    /create    POST    {"name":"test","salary":"123","age":"23"}
         //    {"name":"test","salary":"123","age":"23","id":"719"}
-        let myRequest2     : CallRequest     = CallRequest( e: endpoint( s : "http:",
+        let myRequest2     : CallRequest     = CallRequest( e: endpoint( s : "https:",
                                                                          a : authority( user: "", pw: "", h: "dummy.restapiexample.com", p: "" ),
                                                                          r : "/api/v1/create",
                                                                          p : path( v : [:],
@@ -326,7 +326,7 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
         lgCallUUIDs[ lgCallHandler.queuePOSTStringURI( t: "",
                                                        u : myRequest2.renderURI(), o: myNewObj ) ] = CallHandler.CallStates.Queued
         
-        let myRequest3     : CallRequest     = CallRequest( e: endpoint( s : "http:",
+        let myRequest3     : CallRequest     = CallRequest( e: endpoint( s : "https:",
                                                                          a : authority( user: "", pw: "", h: "dummy.restapiexample.com", p: "" ),
                                                                          r : "/api/v1/employees",
                                                                          p : path( v : [:],

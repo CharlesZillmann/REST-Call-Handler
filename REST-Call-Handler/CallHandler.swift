@@ -44,8 +44,8 @@ protocol CallQueueUserHooksDelegate : class {
 class CallHandler {
     var lgCallQueueUserHooksDelegate    : CallQueueUserHooksDelegate?                               // Delegate to be notified after EACH call has been executed and after ALL calls have executed
     var lgSemaphore                     : DispatchSemaphore?                                        // Semaphore for execution
-    var gGeneralCallsQueue              : [CallTask]                    = [CallTask]()              // Queue for calls waiting to be executed
-    var gGeneralCallsCompleted          : [UUID : CallTask]             = [UUID : CallTask]()       // Queue for calls that have been completed
+    var lgGeneralCallsQueue              : [CallTask]                    = [CallTask]()              // Queue for calls waiting to be executed
+    var lgGeneralCallsCompleted          : [UUID : CallTask]             = [UUID : CallTask]()       // Queue for calls that have been completed
     
     //***************************************************************
     //***************        enum CallStates : String
@@ -179,7 +179,7 @@ class CallHandler {
     //***************        override init(frame: CGRect)
     //***************************************************************
     func queueRESTTask( theTask : CallTask ) {
-        gGeneralCallsQueue.append( theTask )
+        lgGeneralCallsQueue.append( theTask )
         gMsgLog.Log(msg: "FYI: QUEUED TASK\n\t ID:\t\(theTask.TaskUUID);\n\tTAG:\t\(theTask.UsersTag ?? "");\n\tEP:\t\"\(theTask.Endpoint)\"\n")
     }  //gGeneralRESTCallsQueue.append( theTask )
     
@@ -206,7 +206,7 @@ class CallHandler {
                                                                         response    : theURLResponse,
                                                                         error       : theError )
                     
-                    self.gGeneralCallsCompleted[myCompletedTask.TaskUUID] = myCompletedTask
+                    self.lgGeneralCallsCompleted[myCompletedTask.TaskUUID] = myCompletedTask
                     
                     self.lgSemaphore?.signal() // releasing the resource
                 } //makeGeneralOptionsCall closure for completion
@@ -228,7 +228,7 @@ class CallHandler {
                                                                     response    : theURLResponse,
                                                                     error       : theError )
                     
-                    self.gGeneralCallsCompleted[myCompletedTask.TaskUUID] = myCompletedTask
+                    self.lgGeneralCallsCompleted[myCompletedTask.TaskUUID] = myCompletedTask
                     
                     self.lgSemaphore?.signal() // releasing the resource
                 } //makeGeneralGetCall closure for completion
@@ -250,7 +250,7 @@ class CallHandler {
                                                                         response    : theURLResponse,
                                                                         error       : theError )
                     
-                    self.gGeneralCallsCompleted[myCompletedTask.TaskUUID] = myCompletedTask
+                    self.lgGeneralCallsCompleted[myCompletedTask.TaskUUID] = myCompletedTask
                     
                     self.lgSemaphore?.signal() // releasing the resource
             } //makeGeneralHeadCall closure for completion
@@ -267,7 +267,7 @@ class CallHandler {
                                                                      data       : theData,
                                                                      response   : theURLResponse,
                                                                      error      : theError )
-                    self.gGeneralCallsCompleted[myCompletedTask.TaskUUID] = myCompletedTask
+                    self.lgGeneralCallsCompleted[myCompletedTask.TaskUUID] = myCompletedTask
                     
                     self.lgSemaphore?.signal() // releasing the resource
                 }  //makeGeneralPostCall closure for completion
@@ -284,7 +284,7 @@ class CallHandler {
                                                                      data       : theData,
                                                                      response   : theURLResponse,
                                                                      error      : theError )
-                    self.gGeneralCallsCompleted[myCompletedTask.TaskUUID] = myCompletedTask
+                    self.lgGeneralCallsCompleted[myCompletedTask.TaskUUID] = myCompletedTask
                     
                     self.lgSemaphore?.signal() // releasing the resource
                 }  //makeGeneralPutCall closure for completion
@@ -301,7 +301,7 @@ class CallHandler {
                                                                       data       : theData,
                                                                       response   : theURLResponse,
                                                                       error      : theError )
-                    self.gGeneralCallsCompleted[myCompletedTask.TaskUUID] = myCompletedTask
+                    self.lgGeneralCallsCompleted[myCompletedTask.TaskUUID] = myCompletedTask
                     
                     self.lgSemaphore?.signal() // releasing the resource
             }  //makeGeneralPutCall closure for completion
@@ -318,7 +318,7 @@ class CallHandler {
                                                                        data     : theData,
                                                                        response : theURLResponse,
                                                                        error    : theError )
-                    self.gGeneralCallsCompleted[myCompletedTask.TaskUUID] = myCompletedTask
+                    self.lgGeneralCallsCompleted[myCompletedTask.TaskUUID] = myCompletedTask
                     
                     self.lgSemaphore?.signal() // releasing the resource
                 }  //makeGeneralPostCall closure for completion
@@ -1124,7 +1124,7 @@ class CallHandler {
     func executeCallTaskQueueConcurrently(completionHandler: @escaping () -> Void) {
         let group           : DispatchGroup   = DispatchGroup()
         
-        for myTask in gGeneralCallsQueue {
+        for myTask in lgGeneralCallsQueue {
             group.enter()
             self.callStateChange( calltask  : myTask, state : CallHandler.CallStates.Executing )
             
@@ -1155,7 +1155,7 @@ class CallHandler {
         
         lgSemaphore = mySemaphore
         
-        for myTask in gGeneralCallsQueue {
+        for myTask in lgGeneralCallsQueue {
             
             myExecutionQueue.async {
                 
