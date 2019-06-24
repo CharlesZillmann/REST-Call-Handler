@@ -208,6 +208,7 @@ class CallHandler {
                     
                     self.lgGeneralCallsCompleted[myCompletedTask.TaskUUID] = myCompletedTask
                     
+                    self.callStateChange( calltask  : theCallTask, state : CallHandler.CallStates.Complete )
                     self.lgSemaphore?.signal() // releasing the resource
                 } //makeGeneralOptionsCall closure for completion
                 
@@ -230,6 +231,7 @@ class CallHandler {
                     
                     self.lgGeneralCallsCompleted[myCompletedTask.TaskUUID] = myCompletedTask
                     
+                    self.callStateChange( calltask  : theCallTask, state : CallHandler.CallStates.Complete )
                     self.lgSemaphore?.signal() // releasing the resource
                 } //makeGeneralGetCall closure for completion
                 
@@ -252,6 +254,7 @@ class CallHandler {
                     
                     self.lgGeneralCallsCompleted[myCompletedTask.TaskUUID] = myCompletedTask
                     
+                    self.callStateChange( calltask  : theCallTask, state : CallHandler.CallStates.Complete )
                     self.lgSemaphore?.signal() // releasing the resource
             } //makeGeneralHeadCall closure for completion
                 
@@ -269,6 +272,7 @@ class CallHandler {
                                                                      error      : theError )
                     self.lgGeneralCallsCompleted[myCompletedTask.TaskUUID] = myCompletedTask
                     
+                    self.callStateChange( calltask  : theCallTask, state : CallHandler.CallStates.Complete )
                     self.lgSemaphore?.signal() // releasing the resource
                 }  //makeGeneralPostCall closure for completion
                 
@@ -286,6 +290,7 @@ class CallHandler {
                                                                      error      : theError )
                     self.lgGeneralCallsCompleted[myCompletedTask.TaskUUID] = myCompletedTask
                     
+                    self.callStateChange( calltask  : theCallTask, state : CallHandler.CallStates.Complete )
                     self.lgSemaphore?.signal() // releasing the resource
                 }  //makeGeneralPutCall closure for completion
             
@@ -303,6 +308,7 @@ class CallHandler {
                                                                       error      : theError )
                     self.lgGeneralCallsCompleted[myCompletedTask.TaskUUID] = myCompletedTask
                     
+                    self.callStateChange( calltask  : theCallTask, state : CallHandler.CallStates.Complete )
                     self.lgSemaphore?.signal() // releasing the resource
             }  //makeGeneralPutCall closure for completion
                 
@@ -320,6 +326,7 @@ class CallHandler {
                                                                        error    : theError )
                     self.lgGeneralCallsCompleted[myCompletedTask.TaskUUID] = myCompletedTask
                     
+                    self.callStateChange( calltask  : theCallTask, state : CallHandler.CallStates.Complete )
                     self.lgSemaphore?.signal() // releasing the resource
                 }  //makeGeneralPostCall closure for completion
                 
@@ -1129,7 +1136,6 @@ class CallHandler {
             self.callStateChange( calltask  : myTask, state : CallHandler.CallStates.Executing )
             
             executeCallTask( task : myTask ) {
-                self.callStateChange( calltask  : myTask, state : CallHandler.CallStates.Complete )
                 group.leave()
             }  // closure executeCallTask
             
@@ -1165,7 +1171,6 @@ class CallHandler {
                 self.callStateChange( calltask  : myTask, state : CallHandler.CallStates.Executing )
                 
                 self.executeCallTask( task : myTask ) {
-                    self.callStateChange( calltask  : myTask, state : CallHandler.CallStates.Complete )
                 }  //self.executeCallTask( task : myTask )
                 
             }  // executionQueue.async

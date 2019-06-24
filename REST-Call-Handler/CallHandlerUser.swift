@@ -59,6 +59,14 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
     }  // func updateProgress()
     
     //***************************************************************
+    //***************        func GetStateForCall( uuid : UUID ) -> CallHandler.CallStates
+    //***************************************************************
+    func GetStateForCall( uuid : UUID ) -> CallHandler.CallStates? {
+        let myState = self.lgCallUUIDs[ uuid ]?.s
+        return myState
+    }  // func GetStateForCall( uuid : UUID ) -> CallHandler.CallStates
+    
+    //***************************************************************
     //***************        func CallStateChange( calltask  : CallHandler.CallTask, state : CallHandler.CallStates )
     //***************************************************************
     func CallStateChange( calltask  : CallHandler.CallTask, state : CallHandler.CallStates ) {
