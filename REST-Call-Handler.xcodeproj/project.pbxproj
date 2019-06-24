@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8400799522C0A5E9002F099D /* CallTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8400799422C0A5E9002F099D /* CallTableViewCell.swift */; };
 		84A1DB5622B5448000AABF0D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1DB5522B5448000AABF0D /* AppDelegate.swift */; };
 		84A1DB5822B5448000AABF0D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1DB5722B5448000AABF0D /* ViewController.swift */; };
 		84A1DB5B22B5448000AABF0D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84A1DB5922B5448000AABF0D /* Main.storyboard */; };
@@ -41,6 +42,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8400799422C0A5E9002F099D /* CallTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallTableViewCell.swift; sourceTree = "<group>"; };
 		84A1DB5222B5448000AABF0D /* REST-Call-Handler.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "REST-Call-Handler.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		84A1DB5522B5448000AABF0D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		84A1DB5722B5448000AABF0D /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 				84A1DB8322B5469A00AABF0D /* CallHandlerUser.swift */,
 				84A1DB8B22B546D800AABF0D /* CallURIAnatomy.swift */,
 				84A1DB5722B5448000AABF0D /* ViewController.swift */,
+				8400799422C0A5E9002F099D /* CallTableViewCell.swift */,
 				84A1DB5922B5448000AABF0D /* Main.storyboard */,
 				84A1DB5C22B5448100AABF0D /* Assets.xcassets */,
 				84A1DB5E22B5448100AABF0D /* LaunchScreen.storyboard */,
@@ -304,6 +307,7 @@
 				84A1DB9022B5750400AABF0D /* CallOutcomes.swift in Sources */,
 				84A1DB8822B546BA00AABF0D /* CallHandler.swift in Sources */,
 				84A1DB9722B94F7E00AABF0D /* CallActivityIndicator.swift in Sources */,
+				8400799522C0A5E9002F099D /* CallTableViewCell.swift in Sources */,
 				84A1DB8C22B546D800AABF0D /* CallURIAnatomy.swift in Sources */,
 				84A1DB5822B5448000AABF0D /* ViewController.swift in Sources */,
 				84A1DB8E22B569DF00AABF0D /* CallLog.swift in Sources */,

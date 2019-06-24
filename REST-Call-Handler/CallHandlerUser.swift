@@ -16,17 +16,34 @@ import UIKit
 //*******************************************************************************************
 //*******************************************************************************************
 //*******************************************************************************************
+//***************        protocol CallStateUIDelegate : class
+//*******************************************************************************************
+//*******************************************************************************************
+//*******************************************************************************************
+protocol CallStateUIDelegate : class {
+    func CallStateUIChange(   index : Int,  uuid : UUID, state  : CallHandler.CallStates )
+}  //  protocol CallStateUIDelegate : class
+
+//*******************************************************************************************
+//*******************************************************************************************
+//*******************************************************************************************
 //***************        class CallHandlerUser : CallQueueUserHooksDelegate
 //*******************************************************************************************
 //*******************************************************************************************
 //*******************************************************************************************
 class CallHandlerUser : CallQueueUserHooksDelegate {
     
-    var lgCallUUIDs         : [ UUID : CallHandler.CallStates ] = [ UUID : CallHandler.CallStates ]()
-    var lgCallHandler       : CallHandler               = CallHandler()
-    var lgProgressIndicator : GroupProgressIndicator?   = nil
-    var lgProgressTarget    : Double                    = 0
-    var lgProgressActual    : Double                    = 0
+    struct CallMetaData {
+        var i : Int
+        var s : CallHandler.CallStates
+    }
+    
+    var lgCallStateUIDelegate   : CallStateUIDelegate?              = nil
+    var lgCallUUIDs             : [ UUID : CallMetaData ]           = [ UUID : CallMetaData ]()
+    var lgCallHandler           : CallHandler                       = CallHandler()
+    var lgProgressIndicator     : GroupProgressIndicator?           = nil
+    var lgProgressTarget        : Double                            = 0
+    var lgProgressActual        : Double                            = 0
 
     //***************************************************************
     //***************        func updateProgress()
@@ -46,7 +63,14 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
     //***************************************************************
     func CallStateChange( calltask  : CallHandler.CallTask, state : CallHandler.CallStates ) {
         //print( "\(calltask.TaskUUID.uuidString) : \(state)" )
-        self.lgCallUUIDs[ calltask.TaskUUID ] = state
+        self.lgCallUUIDs[ calltask.TaskUUID ]?.s = state
+        if let myIndex = self.lgCallUUIDs[ calltask.TaskUUID ]?.i {
+            DispatchQueue.main.async {
+                self.lgCallStateUIDelegate?.CallStateUIChange(   index : myIndex,  uuid : calltask.TaskUUID , state  : state )
+            }
+        }
+        //cell.lgSpinner.start( from: cell.lgActivityView )
+
     }  // func CallStateChange( calltask  : CallHandler.CallTask, state : CallHandler.CallStates )
     
     //***************************************************************
@@ -232,7 +256,8 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
                                                            d: databody( items : [] ) )
         
         lgCallUUIDs[ lgCallHandler.queueURIRequest( t: "Generate an error with URL Creation: unsafe character }",
-                                                           r : myErroredRequest1 ) ] = CallHandler.CallStates.Queued
+                                                    r : myErroredRequest1 ) ] = CallMetaData( i: lgCallUUIDs.count,  s: CallHandler.CallStates.Queued
+        )
         
         //Generate an error with myGetCompletionFunc guard error == nil else
         //    Loading a URL's contents might fail because the site might be down (for example), so it might throw an error. This means you need to wrap the call into a do/catch block.
@@ -247,7 +272,7 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
                                                            d: databody( items : [] ) )
         
         lgCallUUIDs[ lgCallHandler.queueURIRequest( t: "Generate an error with myGetCompletionFunc guard error == nil else",
-                                                    r : myErroredRequest2 ) ] = CallHandler.CallStates.Queued
+                                                    r : myErroredRequest2 ) ] = CallMetaData( i: lgCallUUIDs.count, s: CallHandler.CallStates.Queued )
         
 
         let myHEADRequest1     : CallRequest     = CallRequest( e: endpoint( s : "https:",
@@ -260,7 +285,7 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
                                                     d: databody( items: [] ) )
         
         lgCallUUIDs[ lgCallHandler.queueURIRequest( t: "Make a successful HEAD Request",
-                                                    r : myHEADRequest1 ) ] = CallHandler.CallStates.Queued
+                                                    r : myHEADRequest1 ) ] = CallMetaData( i: lgCallUUIDs.count, s: CallHandler.CallStates.Queued )
         
         let myHEADRequest2     : CallRequest     = CallRequest( e: endpoint( s : "https:",
                                                                      a : authority( user: "", pw: "", h: "dummy.restapiexample.com", p: "" ),
@@ -272,7 +297,7 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
                                                         d: databody( items: [] ) )
         
         lgCallUUIDs[ lgCallHandler.queueURIRequest( t: "Make an unsuccessful HEAD Request",
-                                                    r : myHEADRequest2 ) ] = CallHandler.CallStates.Queued
+                                                    r : myHEADRequest2 ) ] = CallMetaData( i: lgCallUUIDs.count, s: CallHandler.CallStates.Queued)
         
     }  // func QueueFailingTestCalls( callhandler : CallHandler )
     
@@ -306,7 +331,7 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
                                                             h: headers( pairs: [:] ),
                                                             d: databody( items: [] ) )
         lgCallUUIDs[ lgCallHandler.queueGETStringURI( t: "",
-                                                      u : myRequest1.renderURI() ) ] = CallHandler.CallStates.Queued
+                                                      u : myRequest1.renderURI() ) ] = CallMetaData( i: lgCallUUIDs.count, s: CallHandler.CallStates.Queued )
         
         //    3    /create          POST        JSON    http://dummy.restapiexample.com/api/v1/create           Create new record in database
         //    Route    Method    Sample Json    Results
@@ -324,7 +349,8 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
         let myNewObj                    : [String: Any] = ["name":UUID().uuidString,"salary":"123","age":"23"]
         //let myRuntimeClassContainer     : RuntimeClassContainer = RuntimeClassContainer()
         lgCallUUIDs[ lgCallHandler.queuePOSTStringURI( t: "",
-                                                       u : myRequest2.renderURI(), o: myNewObj ) ] = CallHandler.CallStates.Queued
+                                                       u : myRequest2.renderURI(), o: myNewObj ) ] = CallMetaData( i: lgCallUUIDs.count,
+                                                                                                                   s: CallHandler.CallStates.Queued)
         
         let myRequest3     : CallRequest     = CallRequest( e: endpoint( s : "https:",
                                                                          a : authority( user: "", pw: "", h: "dummy.restapiexample.com", p: "" ),
@@ -335,7 +361,8 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
                                                             h: headers( pairs: [:] ),
                                                             d: databody( items: [] ) )
         lgCallUUIDs[ lgCallHandler.queueGETStringURI( t: "",
-                                                      u : myRequest3.renderURI() ) ] = CallHandler.CallStates.Queued
+                                                      u : myRequest3.renderURI() ) ] = CallMetaData( i: lgCallUUIDs.count,
+                                                                                                     s: CallHandler.CallStates.Queued)
         
         //        let myRequest4     : request     = request( e: endpoint( s : "http:",
         //                                                                 a : authority( user: "", pw: "", h: "dummy.restapiexample.com", p: "" ),
