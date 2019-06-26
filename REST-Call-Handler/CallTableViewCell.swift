@@ -61,7 +61,7 @@ class CallTableViewCell : UITableViewCell {
     
     let lgNameLabel: UILabel = {
         let label           = UILabel()
-        label.font          = .systemFont(ofSize: 16)
+        label.font          = .systemFont(ofSize: 12)
         label.textColor     = UIColor.black
         label.textAlignment = .left
         return label
@@ -69,16 +69,40 @@ class CallTableViewCell : UITableViewCell {
     
     let lgDetailLabel: UILabel = {
         let label           = UILabel()
-        label.font          = .systemFont(ofSize: 12)
+        label.font          = .systemFont(ofSize: 9)
         label.textColor     = UIColor.black
         label.textAlignment = .left
         return label
     }()
     
-    let lgActivityView: UIActivityIndicatorView = {
-        let myView              = UIActivityIndicatorView()
+    let lgStateLabel : UILabel = {
+        let label           = UILabel()
+        label.font          = UIFont.italicSystemFont( ofSize: 8 )
+        label.textColor     = UIColor.lightGray
+        label.textAlignment = .right
+        label.frame         = CGRect( x : 0, y : 0, width : 100, height : 12 )
+        return label
+    }()
+    
+    let lgActivityView : UIActivityIndicatorView = {
+        let myView      = UIActivityIndicatorView()
+        myView.style    = UIActivityIndicatorView.Style.gray
         myView.frame    = CGRect( x : 0, y : 0, width : 40, height : 40 )
         return myView
+    }()
+    
+    let lgResultsButton : UIButton = {
+        let myBtn                       = UIButton()
+        myBtn.frame                     = CGRect( x : 0, y : 0, width : 100, height : 12 )
+        return myBtn
+    }()
+    
+    let gradientLayer : CAGradientLayer = {
+        let myLayer         = CAGradientLayer()
+        myLayer.colors      = [UIColor.lightGray.cgColor, UIColor.white.cgColor]
+        myLayer.startPoint  = CGPoint(x: 0, y: 0)
+        myLayer.endPoint    = CGPoint(x: 0, y: 1)
+        return myLayer
     }()
     
     //***************************************************************
@@ -120,30 +144,37 @@ class CallTableViewCell : UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
+        gradientLayer.frame = self.bounds
+
         let myCMG = layoutMarginsGuide
         
         let myTop : CGFloat     = 6
 
         lgIndexLabel.translatesAutoresizingMaskIntoConstraints = false
-        lgIndexLabel.leadingAnchor.constraint(  equalTo: myCMG.leadingAnchor,   constant: 0     ).isActive = true
-        lgIndexLabel.topAnchor.constraint(      equalTo: myCMG.topAnchor,       constant: myTop ).isActive = true
-        lgIndexLabel.widthAnchor.constraint( equalToConstant: 40).isActive = true
+        lgIndexLabel.leadingAnchor.constraint   (   equalTo : myCMG.leadingAnchor,          constant: 0     ).isActive = true
+        lgIndexLabel.topAnchor.constraint       (   equalTo : myCMG.topAnchor,              constant: myTop ).isActive = true
+        lgIndexLabel.widthAnchor.constraint     (   equalToConstant : 40).isActive = true
 
         lgNameLabel.translatesAutoresizingMaskIntoConstraints = false
-        lgNameLabel.leadingAnchor.constraint(   equalTo: lgIndexLabel.trailingAnchor,   constant: 10 ).isActive = true
-        lgNameLabel.topAnchor.constraint(       equalTo: myCMG.topAnchor,               constant: myTop ).isActive = true
-        lgNameLabel.trailingAnchor.constraint(  equalTo: myCMG.trailingAnchor,          constant: -40 ).isActive = true
+        lgNameLabel.leadingAnchor.constraint    (   equalTo : lgIndexLabel.trailingAnchor,  constant: 10    ).isActive = true
+        lgNameLabel.topAnchor.constraint        (   equalTo : myCMG.topAnchor,              constant: myTop ).isActive = true
+        lgNameLabel.trailingAnchor.constraint   (   equalTo : myCMG.trailingAnchor,         constant: -40   ).isActive = true
 
         lgDetailLabel.translatesAutoresizingMaskIntoConstraints = false
-        lgDetailLabel.leadingAnchor.constraint( equalTo: lgIndexLabel.trailingAnchor,   constant: 10 ).isActive = true
-        lgDetailLabel.topAnchor.constraint(     equalTo: myCMG.topAnchor,               constant: myTop + 24 ).isActive = true
-        lgDetailLabel.trailingAnchor.constraint(equalTo: myCMG.trailingAnchor,          constant: -40 ).isActive = true
+        lgDetailLabel.leadingAnchor.constraint  (   equalTo : lgIndexLabel.trailingAnchor,  constant: 10    ).isActive = true
+        lgDetailLabel.topAnchor.constraint      (   equalTo : myCMG.topAnchor,              constant: myTop + 24 ).isActive = true
+        lgDetailLabel.trailingAnchor.constraint (   equalTo : myCMG.trailingAnchor,         constant: -40   ).isActive = true
+
+        lgStateLabel.sizeToFit()
+        lgStateLabel.translatesAutoresizingMaskIntoConstraints = false
+        lgStateLabel.leadingAnchor.constraint   (   equalTo : myCMG.trailingAnchor,         constant: -lgStateLabel.frame.width ).isActive = true
+        lgStateLabel.topAnchor.constraint       (   equalTo : myCMG.topAnchor,              constant: 0   ).isActive = true
+        lgStateLabel.trailingAnchor.constraint  (   equalTo : myCMG.trailingAnchor,         constant: 0     ).isActive = true
 
         lgActivityView.translatesAutoresizingMaskIntoConstraints = false
-        lgActivityView.leadingAnchor.constraint(equalTo: myCMG.trailingAnchor,          constant: -40 ).isActive = true
-        lgActivityView.topAnchor.constraint(    equalTo: myCMG.topAnchor,               constant: myTop ).isActive = true
-        lgActivityView.widthAnchor.constraint(  equalToConstant: 40 ).isActive = true
-        lgActivityView.heightAnchor.constraint(  equalToConstant: 40 ).isActive = true
+        lgActivityView.leadingAnchor.constraint (   equalTo : myCMG.trailingAnchor,         constant: -lgActivityView.frame.width ).isActive = true
+        lgActivityView.topAnchor.constraint     (   equalTo : myCMG.bottomAnchor,           constant: lgActivityView.frame.height ).isActive = true
+        lgActivityView.trailingAnchor.constraint(   equalTo : myCMG.trailingAnchor,         constant: 0     ).isActive = true
 
     }  //override func layoutSubviews
     
@@ -151,14 +182,17 @@ class CallTableViewCell : UITableViewCell {
     //*********   func addViews
     //***************************************************************
     func addViews(){
+        layer.addSublayer(gradientLayer)
         addSubview(lgIndexLabel)
         addSubview(lgNameLabel)
         addSubview(lgDetailLabel)
+        addSubview(lgStateLabel)
         addSubview(lgActivityView)
+        addSubview(lgResultsButton)
     }  //func addViews
     //**************************************Coding Standard END*********************************************
     
-}  //class MasterTableViewCell
+}  //class CallTableViewCell
 
 //*************************************************************************************************************************
 //*************************************************************************************************************************

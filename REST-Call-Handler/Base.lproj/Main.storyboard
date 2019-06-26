@@ -63,17 +63,11 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
-                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="e93-XV-gru">
-                                <rect key="frame" x="240" y="58" width="108" height="116"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            </view>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
-                        <outlet property="callActivityIndicator" destination="e93-XV-gru" id="6SK-V4-dJU"/>
                         <outlet property="callGroupProgress" destination="6JU-dI-Wby" id="qaf-uy-wpk"/>
                         <outlet property="callsTableView" destination="8fl-PW-eiu" id="Kgw-XC-25g"/>
                         <outlet property="outputTextView" destination="Ho6-eX-gcJ" id="Fmd-uN-Zfy"/>

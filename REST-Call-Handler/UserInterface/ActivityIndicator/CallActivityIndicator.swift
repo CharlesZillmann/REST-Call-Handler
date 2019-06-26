@@ -27,6 +27,13 @@ final class CallActivityIndicator {
     fileprivate static var baseColor            : UIColor                       = UIColor.white
     
     //***************************************************************
+    //***************        func reset()
+    //***************************************************************
+    func reset() {
+        stop()
+    }  // func reset()
+    
+    //***************************************************************
     //***************        public static func start
     //***************************************************************
     func start(   from view       : UIView,

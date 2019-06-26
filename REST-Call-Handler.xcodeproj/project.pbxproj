@@ -13,8 +13,6 @@
 		84A1DB5B22B5448000AABF0D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84A1DB5922B5448000AABF0D /* Main.storyboard */; };
 		84A1DB5D22B5448100AABF0D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 84A1DB5C22B5448100AABF0D /* Assets.xcassets */; };
 		84A1DB6022B5448100AABF0D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84A1DB5E22B5448100AABF0D /* LaunchScreen.storyboard */; };
-		84A1DB6B22B5448100AABF0D /* REST_Call_HandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1DB6A22B5448100AABF0D /* REST_Call_HandlerTests.swift */; };
-		84A1DB7622B5448100AABF0D /* REST_Call_HandlerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1DB7522B5448100AABF0D /* REST_Call_HandlerUITests.swift */; };
 		84A1DB8422B5469A00AABF0D /* CallHandlerUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1DB8322B5469A00AABF0D /* CallHandlerUser.swift */; };
 		84A1DB8822B546BA00AABF0D /* CallHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1DB8722B546BA00AABF0D /* CallHandler.swift */; };
 		84A1DB8C22B546D800AABF0D /* CallURIAnatomy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1DB8B22B546D800AABF0D /* CallURIAnatomy.swift */; };
@@ -51,11 +49,7 @@
 		84A1DB5F22B5448100AABF0D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		84A1DB6122B5448100AABF0D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		84A1DB6622B5448100AABF0D /* REST-Call-HandlerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "REST-Call-HandlerTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		84A1DB6A22B5448100AABF0D /* REST_Call_HandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = REST_Call_HandlerTests.swift; sourceTree = "<group>"; };
-		84A1DB6C22B5448100AABF0D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		84A1DB7122B5448100AABF0D /* REST-Call-HandlerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "REST-Call-HandlerUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		84A1DB7522B5448100AABF0D /* REST_Call_HandlerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = REST_Call_HandlerUITests.swift; sourceTree = "<group>"; };
-		84A1DB7722B5448100AABF0D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		84A1DB8322B5469A00AABF0D /* CallHandlerUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallHandlerUser.swift; sourceTree = "<group>"; };
 		84A1DB8722B546BA00AABF0D /* CallHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallHandler.swift; sourceTree = "<group>"; };
 		84A1DB8B22B546D800AABF0D /* CallURIAnatomy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallURIAnatomy.swift; sourceTree = "<group>"; };
@@ -94,8 +88,6 @@
 			isa = PBXGroup;
 			children = (
 				84A1DB5422B5448000AABF0D /* REST-Call-Handler */,
-				84A1DB6922B5448100AABF0D /* REST-Call-HandlerTests */,
-				84A1DB7422B5448100AABF0D /* REST-Call-HandlerUITests */,
 				84A1DB5322B5448000AABF0D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -128,24 +120,6 @@
 				84A1DB6122B5448100AABF0D /* Info.plist */,
 			);
 			path = "REST-Call-Handler";
-			sourceTree = "<group>";
-		};
-		84A1DB6922B5448100AABF0D /* REST-Call-HandlerTests */ = {
-			isa = PBXGroup;
-			children = (
-				84A1DB6A22B5448100AABF0D /* REST_Call_HandlerTests.swift */,
-				84A1DB6C22B5448100AABF0D /* Info.plist */,
-			);
-			path = "REST-Call-HandlerTests";
-			sourceTree = "<group>";
-		};
-		84A1DB7422B5448100AABF0D /* REST-Call-HandlerUITests */ = {
-			isa = PBXGroup;
-			children = (
-				84A1DB7522B5448100AABF0D /* REST_Call_HandlerUITests.swift */,
-				84A1DB7722B5448100AABF0D /* Info.plist */,
-			);
-			path = "REST-Call-HandlerUITests";
 			sourceTree = "<group>";
 		};
 		84A1DB9122B7D9FF00AABF0D /* UserInterface */ = {
@@ -321,7 +295,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				84A1DB6B22B5448100AABF0D /* REST_Call_HandlerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -329,7 +302,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				84A1DB7622B5448100AABF0D /* REST_Call_HandlerUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

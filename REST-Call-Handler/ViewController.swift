@@ -21,9 +21,6 @@ import UIKit
 //*******************************************************************************************
 class ViewController: UIViewController, gMsgLogDelegate {
     var lgCallHandlerUser   : CallHandlerUser?              = CallHandlerUser()
-    var lgSpinner           : CallActivityIndicator         = CallActivityIndicator()
-    
-    @IBOutlet weak var callActivityIndicator    : UIView!
     
     @IBOutlet weak var callGroupProgress        : GroupProgressIndicator!
     
@@ -57,18 +54,17 @@ class ViewController: UIViewController, gMsgLogDelegate {
     @IBAction func btnReset(_ sender: Any) {
         gMsgLog.ClearLog()
         outputTextView.text = ""
-        lgCallHandlerUser?.ClearCallQueue()
+        lgCallHandlerUser?.reset()
         lgCallHandlerUser?.QueueFailingTestCalls()
         lgCallHandlerUser?.QueuePassingTestCalls()
         callsTableView.reloadData()
-        
     }  // @IBAction func btnReset(_ sender: Any)
     
     //***************************************************************
     //***************        @IBAction func btnRun(_ sender: Any)
     //***************************************************************
     @IBAction func btnRun(_ sender: Any) {
-        lgSpinner.start( from: callActivityIndicator )
+        //lgSpinner.start( from: callActivityIndicator )
         
         if let myCallHandler = lgCallHandlerUser {
             outputTextView.text = ""
@@ -129,7 +125,7 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
             myCell.lgIndexLabel.text              = indexPath.row.description + ": "
             myCell.lgNameLabel.text               = myTag
             myCell.lgDetailLabel.text             = myEndpoint
-        }
+        }  // if let myUUID
         
         return myCell
     }  // func tableView cellForRowAt
@@ -139,19 +135,28 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
     //***************************************************************
     func SetCallCellState( cell : CallTableViewCell, state : CallHandler.CallStates ) {
         
+        cell.lgStateLabel.text  = state.rawValue
+        cell.lgStateLabel.sizeToFit()
+        cell.layoutSubviews()
+        
         switch state {
         case .Queued:
-            //myCell.lgSpinner.start(from: myCell.lgActivityView )
-            //cell.lgActivityView.startAnimating()
-            cell.lgIndexLabel.backgroundColor = .white
+            cell.lgStateLabel.textColor =   UIColor.black
         case .Waiting:
-            cell.lgIndexLabel.backgroundColor = .yellow
+            cell.lgActivityView.startAnimating()
+            cell.lgStateLabel.textColor = .yellow
         case .Executing:
-            cell.lgIndexLabel.backgroundColor = .green
+            
+            if !cell.lgActivityView.isAnimating {
+                cell.lgActivityView.startAnimating()
+            }  // if !cell.lgActivityView.isAnimating
+            
+            cell.lgStateLabel.textColor  = .green
+            
         case .Complete:
             //myCell.lgSpinner.stop()
-            //cell.lgActivityView.stopAnimating()
-            cell.lgIndexLabel.backgroundColor = .white
+            cell.lgActivityView.stopAnimating()
+            cell.lgStateLabel.textColor = UIColor.black
         }  // switch state
         
     }  // func SetCallCellState( cell : CallTableViewCell, state : CallHandler.CallStates )

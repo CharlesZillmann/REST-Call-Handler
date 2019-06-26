@@ -42,11 +42,6 @@ protocol CallQueueUserHooksDelegate : class {
 //*******************************************************************************************
 //*******************************************************************************************
 class CallHandler {
-    var lgCallQueueUserHooksDelegate    : CallQueueUserHooksDelegate?                               // Delegate to be notified after EACH call has been executed and after ALL calls have executed
-    var lgSemaphore                     : DispatchSemaphore?                                        // Semaphore for execution
-    var lgGeneralCallsQueue              : [CallTask]                    = [CallTask]()              // Queue for calls waiting to be executed
-    var lgGeneralCallsCompleted          : [UUID : CallTask]             = [UUID : CallTask]()       // Queue for calls that have been completed
-    
     //***************************************************************
     //***************        enum CallStates : String
     //***************************************************************
@@ -95,7 +90,19 @@ class CallHandler {
         
     }  //struct CallTask
     
+    var lgCallQueueUserHooksDelegate    : CallQueueUserHooksDelegate?   = nil                   // Notified after EACH call *and* ALL calls complete
+    var lgSemaphore                     : DispatchSemaphore?            = nil                   // Semaphore for execution
+    var lgGeneralCallsQueue             : [CallTask]                    = [CallTask]()          // Queue for calls waiting to be executed
+    var lgGeneralCallsCompleted         : [UUID : CallTask]             = [UUID : CallTask]()   // Queue for calls that have been completed
     
+    //***************************************************************
+    //***************        func reset()
+    //***************************************************************
+    func reset() {
+        lgGeneralCallsQueue.removeAll()
+        lgGeneralCallsCompleted.removeAll()
+    }  // func reset()
+
     //***************************************************************
     //***************        func callStateChange( calltask  : CallHandler.CallTask, state     : CallHandler.CallStates  )
     //***************************************************************

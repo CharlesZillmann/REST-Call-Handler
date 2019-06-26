@@ -29,8 +29,18 @@ class GroupProgressIndicator : UIView {
         case Complete       = "Complete"
     }  // enum ProgressStates
     
-    private var lgPercent               : Int            = 0
-    private var lgProgress              : Double            = 0
+    private var lgPercent               : Int               = 0 {
+        
+        didSet{
+            if lgPercent >= 100 {
+                lgPercent = 100
+            } else if lgPercent < 0 {
+                lgPercent = 0
+            } // if progressConstant
+        }  // didSet
+        
+    }  // private var lgPercent
+    
     private var lgState                 : ProgressStates    = ProgressStates.Ready
     
     private var layoutDone      : Bool              = false
@@ -125,14 +135,30 @@ class GroupProgressIndicator : UIView {
     }  // public var safePercen
     
     //***************************************************************
+    //***************        func reset()
+    //***************************************************************
+    func reset() {
+        //variables
+        lgPercent       = 0
+        lgState         = ProgressStates.Ready
+        
+        //UI Components
+        mainLabel.text  = "0"
+        stateLabel.text = lgState.rawValue
+        
+        //Progress
+        setProgress( percent : 0, withAnimation : false )
+        
+    }  // func reset()
+    
+    //***************************************************************
     //***************        override func awakeFromNib
     //***************************************************************
     override func awakeFromNib() {
         
         super.awakeFromNib()
         setupView()
-        mainLabel.text  = "0"
-        stateLabel.text = ProgressStates.Ready.rawValue
+        reset()
         
     }  // override func awakeFromNib
     
@@ -149,6 +175,48 @@ class GroupProgressIndicator : UIView {
     }  // override func layoutSublayers( of layer : CALayer )
     
     //***************************************************************
+    //***************        public func setProgress( percent : Int, withAnimation : Bool )
+    //***************************************************************
+    public func setProgress( percent : Int, withAnimation : Bool ) {
+    
+        lgPercent = percent
+
+        if withAnimation {
+            foregroundLayer.strokeEnd   = CGFloat( lgPercent/100 )
+
+            let myDuration : Double = 1.0
+            let animation           = CABasicAnimation(keyPath: "strokeEnd")
+            animation.fromValue     = 0
+            animation.toValue       = lgPercent
+            animation.duration      = myDuration
+            foregroundLayer.add( animation, forKey: "foregroundAnimation" )
+
+        }  else {
+            CATransaction.begin()
+            CATransaction.setValue( true, forKey: kCATransactionDisableActions)
+            
+            foregroundLayer.strokeEnd   = CGFloat( lgPercent/100 )
+            
+            CATransaction.commit()
+        } // if withAnimation
+        
+
+        self.mainLabel.text     = "\( self.lgPercent )%"
+        
+        if self.lgPercent >= 100 {
+            self.stateLabel.text    = ProgressStates.Complete.rawValue
+        } else if self.lgPercent == 0 {
+            self.stateLabel.text    = ProgressStates.Ready.rawValue
+        } else {
+            self.stateLabel.text    = ProgressStates.Processing.rawValue
+        }  //if self.lgPercent
+        
+        self.setForegroundLayerColorForSafePercent()
+        self.adjustLabels()
+        
+    }  // public func setProgress( percent : Int, withAnimation : Bool )
+    
+    //***************************************************************
     //***************        private func setupView()
     //***************************************************************
     private func setupView() {
@@ -157,73 +225,20 @@ class GroupProgressIndicator : UIView {
         configLabels()
         self.addSubview( mainLabel )
         self.addSubview( stateLabel )
-
+        
     }  // private func setupView()
     
     //***************************************************************
-    //***************        public func setProgress( to progressConstant : Double, withAnimation : Bool )
+    //***************        private func configLabel()
     //***************************************************************
-    public func setProgress( progressConstant : Double, withAnimation : Bool ) {
+    private func configLabels() {
         
-        var currentTime  : Double = 0
+        mainLabel.font          = UIFont.systemFont( ofSize: mainLabelSize )
+        stateLabel.font         = UIFont.systemFont( ofSize: stateLabelSize )
+        adjustLabels()
         
-        if progressConstant >= 1 {
-            lgProgress = 1
-        } else if progressConstant < 0 {
-            lgProgress = 0
-        } else {
-            lgProgress = progressConstant
-        }  // if progressConstant
-        
-        foregroundLayer.strokeEnd   = CGFloat( lgProgress )
-        
-        let myDuration : Double = 2.0
-        
-        if withAnimation {
-            
-            let animation           = CABasicAnimation(keyPath: "strokeEnd")
-            animation.fromValue     = 0
-            animation.toValue       = lgProgress
-            animation.duration      = myDuration
-            foregroundLayer.add( animation, forKey: "foregroundAnimation" )
-            
-        }  // if withAnimation
-        
-        let myInterval = myDuration / 20.0
-        
-        let timer = Timer.scheduledTimer( withTimeInterval : myInterval, repeats : true ) { (timer) in
-            
-            if currentTime >= myDuration {
-                
-                timer.invalidate()
+    }  // private func configLabel()
 
-            } else {
-                currentTime             += myInterval
-                self.lgPercent  = Int( self.lgProgress * (currentTime / myDuration * 100 ) )
-                
-                DispatchQueue.main.async {
-
-                    self.mainLabel.text     = "\( self.lgPercent )%"
-                    
-                    if self.lgPercent >= 100 {
-                        self.stateLabel.text    = ProgressStates.Complete.rawValue
-                    } else if self.lgPercent == 0 {
-                        self.stateLabel.text    = ProgressStates.Ready.rawValue
-                    } else {
-                        self.stateLabel.text    = ProgressStates.Processing.rawValue
-                    }  //if self.lgPercent
-                    
-                    self.setForegroundLayerColorForSafePercent()
-                    self.adjustLabels()
-                }
-            }  // if currentTime >= 2
-            
-        }  // closure let timer
-        
-        timer.fire()
-
-    }  // public func setProgress( to progressConstant : Double, withAnimation : Bool )
-    
     //***************************************************************
     //***************        private func configLabel()
     //***************************************************************
@@ -238,17 +253,6 @@ class GroupProgressIndicator : UIView {
     }  // private func configLabel()
     
     //***************************************************************
-    //***************        private func configLabel()
-    //***************************************************************
-    private func configLabels() {
-        
-        mainLabel.font          = UIFont.systemFont( ofSize: mainLabelSize )
-        stateLabel.font         = UIFont.systemFont( ofSize: stateLabelSize )
-        adjustLabels()
-        
-    }  // private func configLabel()
-    
-    //***************************************************************
     //***************        private func makeBar()
     //***************************************************************
     private func makeBar() {
@@ -258,6 +262,24 @@ class GroupProgressIndicator : UIView {
         drawForegroundLayer()
         
     }  // private func makeBar()
+    
+    //***************************************************************
+    //***************        private func setForegroundLayerColorForSafePercent()
+    //***************************************************************
+    private func setForegroundLayerColorForSafePercent() {
+        
+        //if Int( mainLabel.text! )! >= self.safePercent {
+        if self.lgPercent >= self.safePercent {
+            
+            self.foregroundLayer.strokeColor    = UIColor.green.cgColor
+            
+        } else {
+            
+            self.foregroundLayer.strokeColor    = UIColor.red.cgColor
+            
+        }  // if
+        
+    }  // private func setForegroundLayerColorForSafePercent()
     
     //***************************************************************
     //***************        private func drawBackgroundLayer()
@@ -304,23 +326,7 @@ class GroupProgressIndicator : UIView {
         
     }  // private func drawForegroundLayer()
     
-    //***************************************************************
-    //***************        private func setForegroundLayerColorForSafePercent()
-    //***************************************************************
-    private func setForegroundLayerColorForSafePercent() {
-        
-        //if Int( mainLabel.text! )! >= self.safePercent {
-        if self.lgPercent >= self.safePercent {
 
-            self.foregroundLayer.strokeColor    = UIColor.green.cgColor
-            
-        } else {
-            
-            self.foregroundLayer.strokeColor    = UIColor.red.cgColor
-            
-        }  // if
-        
-    }  // private func setForegroundLayerColorForSafePercent()
     
 }  // class GroupProgressIndicator : UIView
 
