@@ -47,7 +47,7 @@ protocol gMsgLogDelegate {
 class CallLog {
     //***************************************************************
     //***************        var gMsgLog
-    //***************************************************************
+    //*****************************-**********************************
     //Array of Strings to log messages
     var lgMsgLog    : [String]          = []
     var lgDelegate  : gMsgLogDelegate?  = nil
@@ -68,6 +68,9 @@ class CallLog {
     //***************************************************************
     func ClearLog() {
         lgMsgLog.removeAll()
+        DispatchQueue.main.async {
+            self.lgDelegate?.newMsgLogged()
+        }  // DispatchQueue.main.async
     }  // func ClearLog()
     
     //***************************************************************

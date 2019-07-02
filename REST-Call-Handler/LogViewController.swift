@@ -1,7 +1,8 @@
+
 /*************************************************************************
  MIT License
  
- Copyright (c) 2019  CallActivityIndicator.swift Charles Zillmann charles.zillmann@gmail.com
+ Copyright (c) 2019  LogViewController.swift Charles Zillmann charles.zillmann@gmail.com
  
  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
  
@@ -12,77 +13,50 @@
 
 import UIKit
 
+//*******************************************************************************************
+//*******************************************************************************************
+//*******************************************************************************************
+//***************        class CallHandler
+//*******************************************************************************************
+//*******************************************************************************************
+//*******************************************************************************************
 
-//*******************************************************************************************
-//*******************************************************************************************
-//*******************************************************************************************
-//***************        final class CallActivityIndicator
-//*******************************************************************************************
-//*******************************************************************************************
-//*******************************************************************************************
-final class CallActivityIndicator {
-    fileprivate static var activityIndicator    : UIActivityIndicatorView?
-    fileprivate static var style                : UIActivityIndicatorView.Style = .whiteLarge
-    fileprivate static var baseBackColor        : UIColor                       = UIColor( white : 0, alpha : 0.6 )
-    fileprivate static var baseColor            : UIColor                       = UIColor.white
+class LogViewController : UIViewController {
+    @IBOutlet weak var navBar   : UINavigationBar!
+    @IBOutlet weak var btnClose : UIBarButtonItem!
+    @IBOutlet weak var btnClear : UIBarButtonItem!
+    @IBOutlet weak var txtView  : UITextView!
     
     //***************************************************************
-    //***************        func reset()
+    //***************        @IBAction func btnClearPressed(_ sender: Any)
     //***************************************************************
-    func reset() {
-        stop()
-    }  // func reset()
+    @IBAction func btnClosePressed(_ sender: Any) {
+        self.dismiss(animated: false, completion: nil)
+    }  // @IBAction func btnClosePressed(_ sender: Any)
     
     //***************************************************************
-    //***************        public static func start
+    //***************        @IBAction func btnClearPressed(_ sender: Any)
     //***************************************************************
-    func start(   from view       : UIView,
-                  style           : UIActivityIndicatorView.Style = CallActivityIndicator.style,
-                  backgroundColor : UIColor                       = CallActivityIndicator.baseBackColor,
-                  baseColor       : UIColor                       = CallActivityIndicator.baseColor ) {
-        
-        guard CallActivityIndicator.activityIndicator == nil else { return }
-        
-        let callactivityindicator                                         = UIActivityIndicatorView( style: style )
-        callactivityindicator.backgroundColor                             = backgroundColor
-        callactivityindicator.color                                       = baseColor
-        callactivityindicator.translatesAutoresizingMaskIntoConstraints   = false
-        view.addSubview( callactivityindicator )
-        
-        // Auto-layout constraints
-        addConstraints( to : view, with : callactivityindicator )
-        
-        CallActivityIndicator.activityIndicator                           = callactivityindicator
-        CallActivityIndicator.activityIndicator?.startAnimating()
-    }  //public static func start
+    @IBAction func btnClearPressed(_ sender: Any) {
+        gMsgLog.ClearLog()
+        txtView.text = gMsgLog.LogAsText()
+    }  // @IBAction func btnClearPressed(_ sender: Any)
     
     //***************************************************************
-    //***************        public static func stop()
+    //***************        override func viewDidLoad()
     //***************************************************************
-    func stop() {
-        CallActivityIndicator.activityIndicator?.stopAnimating()
-        CallActivityIndicator.activityIndicator?.removeFromSuperview()
-        CallActivityIndicator.activityIndicator = nil
-    }  //public static func stop()
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        txtView.text = gMsgLog.LogAsText()
+    }  // override func viewDidLoad()
     
-    //***************************************************************
-    //***************        fileprivate static func addConstraints
-    //***************************************************************
-    func addConstraints(to view: UIView, with spinner: UIActivityIndicatorView) {
-        spinner.topAnchor.constraint(       equalTo : view.topAnchor     ).isActive = true
-        spinner.trailingAnchor.constraint(  equalTo : view.trailingAnchor).isActive = true
-        spinner.bottomAnchor.constraint(    equalTo : view.bottomAnchor  ).isActive = true
-        spinner.leadingAnchor.constraint(   equalTo : view.leadingAnchor ).isActive = true
-    }  // fileprivate static func addConstraints
-    
-}  // final class CallActivityIndicator
-
+}  // class LogViewController : UIViewController
 
 //*************************************************************************************************************************
 //*************************************************************************************************************************
 //*************************************************************************************************************************
 //*************************************************************************************************************************
-//******************************************  END CallActivityIndicator.swift
+//******************************************  END LogViewController.swift
 //*************************************************************************************************************************
 //*************************************************************************************************************************
 //*************************************************************************************************************************

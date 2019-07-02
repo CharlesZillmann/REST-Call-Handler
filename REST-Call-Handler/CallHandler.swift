@@ -91,25 +91,104 @@ class CallHandler {
     }  //struct CallTask
     
     var lgCallQueueUserHooksDelegate    : CallQueueUserHooksDelegate?   = nil                   // Notified after EACH call *and* ALL calls complete
-    var lgSemaphore                     : DispatchSemaphore?            = nil                   // Semaphore for execution
-    var lgGeneralCallsQueue             : [CallTask]                    = [CallTask]()          // Queue for calls waiting to be executed
-    var lgGeneralCallsCompleted         : [UUID : CallTask]             = [UUID : CallTask]()   // Queue for calls that have been completed
+    private var lgSemaphore             : DispatchSemaphore?            = nil                   // Semaphore for execution
+    private var lgGeneralCallsQueue     : [CallTask]                    = [CallTask]()          // Queue for calls waiting to be executed
+    private var lgGeneralCallsStates    : [CallStates]                  = [CallStates]()        // Arraty for holding State
+    private var lgGeneralCallsCompleted : [UUID : CallTask]             = [UUID : CallTask]()   // Queue for calls that have been completed
     
     //***************************************************************
     //***************        func reset()
     //***************************************************************
-    func reset() {
+    func resetAll() {
         lgGeneralCallsQueue.removeAll()
-        lgGeneralCallsCompleted.removeAll()
+        lgGeneralCallsStates.removeAll()
+        resetCompleted()
     }  // func reset()
 
+    //***************************************************************
+    //***************        func reset()
+    //***************************************************************
+    func resetCompleted() {
+        lgGeneralCallsCompleted.removeAll()
+        for index in 0 ..< lgGeneralCallsStates.count {
+            lgGeneralCallsStates[index] = CallStates.Queued
+        }
+    }  // func reset()
+    
+    //***************************************************************
+    //***************        func completedCallsCount() -> Int
+    //***************************************************************
+    func completedCallsCount() -> Int {
+        return lgGeneralCallsCompleted.count
+    }  // func completedCallsCount() -> Int
+    
+    //***************************************************************
+    //***************        func queuedCallsCount() -> Int
+    //***************************************************************
+    func queuedCallsCount() -> Int {
+        return lgGeneralCallsQueue.count
+    }  // func queuedCallsCount() -> Int
+    
+    //***************************************************************
+    //***************        func queuedCallsCount() -> Int
+    //***************************************************************
+    func queuedCallsUUID( index : Int ) -> UUID {
+        return lgGeneralCallsQueue[ index ].TaskUUID
+    }  // func queuedCallsCount() -> Int
+    
+    //***************************************************************
+    //***************        func queuedCallTaskforUUID( uuid : UUID ) -> CallTask?
+    //***************************************************************
+    func queuedCallTaskforUUID( uuid : UUID ) -> CallTask? {
+        
+        for (_, value) in lgGeneralCallsQueue.enumerated() {
+            if value.TaskUUID == uuid {
+                return value
+            }  // if value.TaskUUID == uuid
+        }  // for (_, value) in lgGeneralCallsQueue.enumerated()
+        
+        return nil
+    }  // func queuedCallTaskforUUID( uuid : UUID ) -> CallTask?
+    
+    //***************************************************************
+    //***************        func queuedCallIndexforUUID( uuid : UUID ) -> Int?
+    //***************************************************************
+    func queuedCallIndexforUUID( uuid : UUID ) -> Int? {
+        
+        for (index, value) in lgGeneralCallsQueue.enumerated() {
+            if value.TaskUUID == uuid {
+                return index
+            }  // if value.TaskUUID == uuid
+        }  // for (_, value) in lgGeneralCallsQueue.enumerated()
+        
+        return nil
+    }  // func queuedCallIndexforUUID( uuid : UUID ) -> Int?
+    
+    //***************************************************************
+    //***************        func queuedCallStateforUUID( uuid : UUID ) -> CallHandler.CallStates?
+    //***************************************************************
+    func queuedCallStateforUUID( uuid : UUID ) -> CallHandler.CallStates? {
+        
+        if let myIndex = queuedCallIndexforUUID( uuid : uuid ) {
+            return lgGeneralCallsStates[ myIndex ]
+        }
+        
+        return nil
+    }  // ffunc queuedCallStateforUUID( uuid : UUID ) -> CallHandler.CallStates?
+    
     //***************************************************************
     //***************        func callStateChange( calltask  : CallHandler.CallTask, state     : CallHandler.CallStates  )
     //***************************************************************
     func callStateChange( calltask  : CallHandler.CallTask, state     : CallHandler.CallStates  ) {
+        
+        if let myIndex = queuedCallIndexforUUID( uuid : calltask.TaskUUID ) {
+            lgGeneralCallsStates[ myIndex ] = state
+        }
+        
         DispatchQueue.main.async {
             self.lgCallQueueUserHooksDelegate?.CallStateChange( calltask  : calltask, state : state )
         }
+        
     }  // func callStateChange( calltask  : CallHandler.CallTask, state     : CallHandler.CallStates  )
     
     //***************************************************************
@@ -167,7 +246,7 @@ class CallHandler {
     //***************************************************************
     //***************        func func queueURIRequest( r : request)
     //***************************************************************
-    func queueURIRequest( t : String, r : CallRequest) -> UUID {
+    func queueURIRequest( t : String, r : CallRequest) {
         let myEndpointURI = r.renderURI()
         
         let myUUID = UUID()
@@ -178,15 +257,14 @@ class CallHandler {
                                           WithJSONObject                : nil )
         
         queueRESTTask( theTask : myTask )
-        
-        return myUUID
     }  //func queueURIRequest( r : request)
     
     //***************************************************************
     //***************        override init(frame: CGRect)
     //***************************************************************
-    func queueRESTTask( theTask : CallTask ) {
+    private func queueRESTTask( theTask : CallTask ) {
         lgGeneralCallsQueue.append( theTask )
+        lgGeneralCallsStates.append( CallHandler.CallStates.Queued )
         gMsgLog.Log(msg: "FYI: QUEUED TASK\n\t ID:\t\(theTask.TaskUUID);\n\tTAG:\t\(theTask.UsersTag ?? "");\n\tEP:\t\"\(theTask.Endpoint)\"\n")
     }  //gGeneralRESTCallsQueue.append( theTask )
     

@@ -50,7 +50,6 @@ import UIKit
 //*******************************************************************************************
 //*******************************************************************************************
 class CallTableViewCell : UITableViewCell {
-    //var lgSpinner           : CallActivityIndicator         = CallActivityIndicator()
 
     let lgIndexLabel: UILabel = {
         let label = UILabel()
@@ -136,7 +135,66 @@ class CallTableViewCell : UITableViewCell {
         self.contentView.clipsToBounds              = false
         self.clipsToBounds                          = false
         super.prepareForReuse()
+        SetCallCellState()
+        lgIndexLabel.text   = ""
+        lgNameLabel.text    = ""
+        lgDetailLabel.text  = ""
+        lgStateLabel.text   = ""
     }  //override func prepareForReuse
+    
+    //***************************************************************
+    //***************            func SetCallCellState( cell : CallTableViewCell, state : CallHandler.CallStates )
+    //***************************************************************
+    func SetCallCellState( state : CallHandler.CallStates? = nil ) {
+        
+        if let myState = state {
+            
+            self.lgStateLabel.text          = myState.rawValue
+            self.lgStateLabel.sizeToFit()
+            self.layoutSubviews()
+            
+            switch myState {
+            case .Queued:
+                
+                if self.lgActivityView.isAnimating {
+                    self.lgActivityView.stopAnimating()
+                }  // if !cell.lgActivityView.isAnimating
+                self.lgStateLabel.textColor =   UIColor.black
+                
+            case .Waiting:
+                
+                if !self.lgActivityView.isAnimating {
+                    self.lgActivityView.startAnimating()
+                }  // if !cell.lgActivityView.isAnimating
+                self.lgStateLabel.textColor = UIColor.yellow
+                
+            case .Executing:
+                
+                if !self.lgActivityView.isAnimating {
+                    self.lgActivityView.startAnimating()
+                }  // if !cell.lgActivityView.isAnimating
+                self.lgStateLabel.textColor  = UIColor.green
+                
+            case .Complete:
+                
+                if self.lgActivityView.isAnimating {
+                    self.lgActivityView.stopAnimating()
+                }  // if !cell.lgActivityView.isAnimating
+                self.lgStateLabel.textColor = UIColor.black
+                
+            }  // switch state
+        } else {
+            
+            self.lgStateLabel.text          = ""
+            self.lgStateLabel.sizeToFit()
+            self.layoutSubviews()
+            if self.lgActivityView.isAnimating {
+                self.lgActivityView.stopAnimating()
+            }  // if !cell.lgActivityView.isAnimating
+            self.lgStateLabel.textColor =   UIColor.black
+        }
+        
+    }  // func SetCallCellState( cell : CallTableViewCell, state : CallHandler.CallStates )
     
     //***************************************************************
     //***************        override func layoutSubviews

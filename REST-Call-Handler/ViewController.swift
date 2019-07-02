@@ -19,14 +19,31 @@ import UIKit
 //*******************************************************************************************
 //*******************************************************************************************
 //*******************************************************************************************
-class ViewController: UIViewController, gMsgLogDelegate {
-    var lgCallHandlerUser   : CallHandlerUser?              = CallHandlerUser()
+class ViewController : UIViewController, gMsgLogDelegate {
+    var lgCallHandlerUser                   : CallHandlerUser?          = CallHandlerUser()
     
-    @IBOutlet weak var callGroupProgress        : GroupProgressIndicator!
+    @IBOutlet weak var callGroupProgress    : GroupProgressIndicator!
+    @IBOutlet weak var callsTableView       : UITableView!
+    @IBOutlet weak var btnLog               : UIBarButtonItem!
     
-    @IBOutlet weak var callsTableView : UITableView!
     
-    @IBOutlet weak var outputTextView : UITextView!
+    @IBAction func btnLogPressed(_ sender: Any) {
+        performSegue(withIdentifier: "ShowLogSeque", sender: self)
+    }
+    
+    //***************************************************************
+    //***************        override func prepare(for segue: UIStoryboardSegue, sender: Any?)
+    //***************************************************************
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        if segue.identifier == "ShowLogSeque" {
+//            if let nextViewController = segue.destination as? LogViewController {
+//                nextViewController.navBar.  .valueOfxyz = "XYZ" //Or pass any values
+//                nextViewController.valueOf123 = 123
+//            }
+        }  // if segue.identifier == "MySegueId"
+        
+    }  // override func prepare(for segue: UIStoryboardSegue, sender: Any?)
     
     //***************************************************************
     //***************        override func viewDidLoad()
@@ -37,7 +54,6 @@ class ViewController: UIViewController, gMsgLogDelegate {
         
         // Do any additional setup after loading the view.
         gMsgLog.lgDelegate                          = self
-        outputTextView.text                         = ""
         callsTableView.dataSource                   = self
         callsTableView.delegate                     = self
         
@@ -46,6 +62,8 @@ class ViewController: UIViewController, gMsgLogDelegate {
         lgCallHandlerUser?.QueueFailingTestCalls()
         lgCallHandlerUser?.QueuePassingTestCalls()
         
+        gMsgLog.ClearLog()
+        btnLog.title = "Log(0)"
     }  // override func viewDidLoad()
     
     //***************************************************************
@@ -53,7 +71,8 @@ class ViewController: UIViewController, gMsgLogDelegate {
     //***************************************************************
     @IBAction func btnReset(_ sender: Any) {
         gMsgLog.ClearLog()
-        outputTextView.text = ""
+        btnLog.title = "Log(0)"
+
         lgCallHandlerUser?.reset()
         lgCallHandlerUser?.QueueFailingTestCalls()
         lgCallHandlerUser?.QueuePassingTestCalls()
@@ -64,12 +83,12 @@ class ViewController: UIViewController, gMsgLogDelegate {
     //***************        @IBAction func btnRun(_ sender: Any)
     //***************************************************************
     @IBAction func btnRun(_ sender: Any) {
-        //lgSpinner.start( from: callActivityIndicator )
         
         if let myCallHandler = lgCallHandlerUser {
-            outputTextView.text = ""
+            gMsgLog.ClearLog()
+            btnLog.title = "Log(0)"
+
             myCallHandler.MakeCalls()
-            outputTextView.text = gMsgLog.LogAsText()
         }  // if let myCallHandler = callHandler
         
     }  // @IBAction func btnRun(_ sender: Any)
@@ -78,7 +97,7 @@ class ViewController: UIViewController, gMsgLogDelegate {
     //***************        func newMsgLogged()
     //***************************************************************
     func newMsgLogged() {
-        self.outputTextView.text = gMsgLog.LogAsText()
+        btnLog.title = "Log(\(gMsgLog.lgMsgLog.count))"
     }  // func newMsgLogged()
     
 }  // class ViewController: UIViewController
@@ -96,70 +115,46 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
     //***************        override func tableView heightForRowAt
     //***************************************************************
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 100.0
+        return 80.0
     }  //override func tableView heightForRowAt
     
     //***************************************************************
     //***************        func tableView numberOfRowsInSection
     //***************************************************************
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return lgCallHandlerUser?.lgCallHandler.lgGeneralCallsQueue.count  ?? 0
+        return lgCallHandlerUser?.queuedCallsCount() ?? 0
     }  // func tableView numberOfRowsInSection
     
     //***************************************************************
     //***************            func tableView cellForRowAt
     //***************************************************************
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
+        var myEndpoint  : String        = ""
+        var myTag       : String        = ""
+
         let myCell  : CallTableViewCell = tableView.dequeueReusableCell( withIdentifier: "QueuedCallCell", for: indexPath ) as! CallTableViewCell
         
-        if let myUUID : UUID = lgCallHandlerUser?.lgCallHandler.lgGeneralCallsQueue[indexPath.row].TaskUUID {
+        if let myUUID : UUID = lgCallHandlerUser?.queuedCallsUUID( index : indexPath.row ) {
             
-            let myEndpoint  : String        = lgCallHandlerUser?.lgCallHandler.lgGeneralCallsQueue[indexPath.row].Endpoint ?? ""
-            let myTag       : String        = lgCallHandlerUser?.lgCallHandler.lgGeneralCallsQueue[indexPath.row].UsersTag ?? ""
-            
-            if let myState  : CallHandler.CallStates = lgCallHandlerUser?.GetStateForCall( uuid : myUUID ) {
-                SetCallCellState( cell : myCell, state : myState )
-            }  // if let myState
-            
-            myCell.lgIndexLabel.text              = indexPath.row.description + ": "
-            myCell.lgNameLabel.text               = myTag
-            myCell.lgDetailLabel.text             = myEndpoint
+            if let myCallTask = lgCallHandlerUser?.queuedCallTaskforUUID( uuid : myUUID ) {
+                myEndpoint  = myCallTask.Endpoint
+                myTag       = myCallTask.UsersTag ?? ""
+                if myTag == "" { myTag       = "NO USER TAG" }
+                
+                if let myState = lgCallHandlerUser?.queuedCallStateforUUID( uuid : myUUID ) {
+                    myCell.SetCallCellState( state : myState )
+                }  // if let myState
+                
+                myCell.lgIndexLabel.text              = indexPath.row.description
+                myCell.lgNameLabel.text               = myTag
+                myCell.lgDetailLabel.text             = myEndpoint
+                
+            }  // if let myCallTask
+
         }  // if let myUUID
         
         return myCell
     }  // func tableView cellForRowAt
-    
-    //***************************************************************
-    //***************            func SetCallCellState( cell : CallTableViewCell, state : CallHandler.CallStates )
-    //***************************************************************
-    func SetCallCellState( cell : CallTableViewCell, state : CallHandler.CallStates ) {
-        
-        cell.lgStateLabel.text  = state.rawValue
-        cell.lgStateLabel.sizeToFit()
-        cell.layoutSubviews()
-        
-        switch state {
-        case .Queued:
-            cell.lgStateLabel.textColor =   UIColor.black
-        case .Waiting:
-            cell.lgActivityView.startAnimating()
-            cell.lgStateLabel.textColor = .yellow
-        case .Executing:
-            
-            if !cell.lgActivityView.isAnimating {
-                cell.lgActivityView.startAnimating()
-            }  // if !cell.lgActivityView.isAnimating
-            
-            cell.lgStateLabel.textColor  = .green
-            
-        case .Complete:
-            //myCell.lgSpinner.stop()
-            cell.lgActivityView.stopAnimating()
-            cell.lgStateLabel.textColor = UIColor.black
-        }  // switch state
-        
-    }  // func SetCallCellState( cell : CallTableViewCell, state : CallHandler.CallStates )
     
 }  // extension ViewController: UITableViewDataSource
 
@@ -175,11 +170,15 @@ extension ViewController : CallStateUIDelegate {
     //***************************************************************
     //***************            func CallStateUIChange(   index : Int,  uuid : UUID, state  : CallHandler.CallStates )
     //***************************************************************
-    func CallStateUIChange(   index : Int,  uuid : UUID, state  : CallHandler.CallStates ) {
+    func CallStateUIChange( uuid : UUID, state  : CallHandler.CallStates ) {
+
+        if let myIndex = lgCallHandlerUser?.queuedCallIndexforUUID( uuid: uuid ) {
         
-        if let myCell = callsTableView.cellForRow( at: IndexPath( row : index, section : 0 ) ) as! CallTableViewCell? {
-            SetCallCellState( cell : myCell, state : state )
-        }  // if let myCell
+            if let myCell = callsTableView.cellForRow( at: IndexPath( row : myIndex, section : 0 ) ) as! CallTableViewCell? {
+                myCell.SetCallCellState( state : state )
+            } // if let myCell
+            
+        }  // if let myIndex
         
     }  // func CallStateUIChange(   index : Int,  uuid : UUID, state  : CallHandler.CallStates )
     
