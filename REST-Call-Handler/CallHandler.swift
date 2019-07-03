@@ -177,17 +177,37 @@ class CallHandler {
     }  // ffunc queuedCallStateforUUID( uuid : UUID ) -> CallHandler.CallStates?
     
     //***************************************************************
-    //***************        func callStateChange( calltask  : CallHandler.CallTask, state     : CallHandler.CallStates  )
+    //***************        func queuedCallDump()
+    //***************************************************************
+    func queuedCallDump() {
+        var myString : String = ""
+        
+        for ( index, value) in lgGeneralCallsQueue.enumerated() {
+            myString += "\(index): \(value.TaskUUID): \(lgGeneralCallsStates[ index ])\n"
+        }  // for (_, value) in lgGeneralCallsQueue.enumerated()
+        
+        print( myString )
+
+    }  // func queuedCallDump()
+    
+    //***************************************************************
+    //***************        func callStateChange( calltask  : CallHandler.CallTask, state : CallHandler.CallStates  )
     //***************************************************************
     func callStateChange( calltask  : CallHandler.CallTask, state : CallHandler.CallStates  ) {
         
+        print("\n\(calltask.TaskUUID.uuidString): \(state.rawValue)")
+
         if let myIndex = queuedCallIndexforUUID( uuid : calltask.TaskUUID ) {
+            
             lgGeneralCallsStates[ myIndex ] = state
-        }
-        
-        DispatchQueue.main.async {
-            self.lgCallQueueUserHooksDelegate?.CallStateChange( calltask  : calltask, state : state )
-        }
+            
+            queuedCallDump()
+            
+            DispatchQueue.main.async {
+                self.lgCallQueueUserHooksDelegate?.CallStateChange( calltask  : calltask, state : state )
+            }  // DispatchQueue.main.async
+            
+        }  // if let myIndex
         
     }  // func callStateChange( calltask  : CallHandler.CallTask, state     : CallHandler.CallStates  )
     
@@ -1240,17 +1260,14 @@ class CallHandler {
         lgSemaphore = mySemaphore
         
         for myTask in lgGeneralCallsQueue {
+            self.callStateChange( calltask  : myTask, state : CallHandler.CallStates.Waiting )
+            self.lgSemaphore?.wait()  // requesting the resource
             
+            self.callStateChange( calltask  : myTask, state : CallHandler.CallStates.Executing )
+
             myExecutionQueue.async {
-                
-                self.callStateChange( calltask  : myTask, state : CallHandler.CallStates.Waiting )
-                self.lgSemaphore?.wait()  // requesting the resource
-                
-                self.callStateChange( calltask  : myTask, state : CallHandler.CallStates.Executing )
-                
                 self.executeCallTask( task : myTask ) {
                 }  //self.executeCallTask( task : myTask )
-                
             }  // executionQueue.async
             
         }  // for myTask in gGeneralCallsQueue

@@ -225,9 +225,8 @@ class CallTableViewCell : UITableViewCell {
 
         lgStateLabel.sizeToFit()
         lgStateLabel.translatesAutoresizingMaskIntoConstraints = false
-        lgStateLabel.leadingAnchor.constraint   (   equalTo : myCMG.trailingAnchor,         constant: -lgStateLabel.frame.width ).isActive = true
         lgStateLabel.topAnchor.constraint       (   equalTo : myCMG.topAnchor,              constant: 0   ).isActive = true
-        lgStateLabel.trailingAnchor.constraint  (   equalTo : myCMG.trailingAnchor,         constant: 0     ).isActive = true
+        lgStateLabel.trailingAnchor.constraint  (   equalTo : myCMG.trailingAnchor,         constant: 0   ).isActive = true
 
         lgActivityView.translatesAutoresizingMaskIntoConstraints = false
         lgActivityView.leadingAnchor.constraint (   equalTo : myCMG.trailingAnchor,         constant: -lgActivityView.frame.width ).isActive = true

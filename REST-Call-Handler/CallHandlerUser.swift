@@ -256,6 +256,10 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
         
         lgCallHandler.lgCallQueueUserHooksDelegate                  = self
         
+        print("************ INITIAL QUEUE BEGIN *************")
+        lgCallHandler.queuedCallDump()
+        print("************ INITIAL QUEUE END *************")
+
         if serial {
             lgCallHandler.executeCallsSerially()
         } else {
