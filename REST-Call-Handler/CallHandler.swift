@@ -179,7 +179,7 @@ class CallHandler {
     //***************************************************************
     //***************        func callStateChange( calltask  : CallHandler.CallTask, state     : CallHandler.CallStates  )
     //***************************************************************
-    func callStateChange( calltask  : CallHandler.CallTask, state     : CallHandler.CallStates  ) {
+    func callStateChange( calltask  : CallHandler.CallTask, state : CallHandler.CallStates  ) {
         
         if let myIndex = queuedCallIndexforUUID( uuid : calltask.TaskUUID ) {
             lgGeneralCallsStates[ myIndex ] = state
@@ -194,7 +194,7 @@ class CallHandler {
     //***************************************************************
     //***************        func queueGETStringURI( u : String)
     //***************************************************************
-    func queueGETStringURI( t : String, u : String) -> UUID {
+    func queueGETStringURI( t : String, u : String) {
         
         let myUUID = UUID()
         let myTask : CallTask = CallTask(   UsersTag                      : t,
@@ -204,15 +204,12 @@ class CallHandler {
                                             WithJSONObject                : nil )
         
         queueRESTTask( theTask : myTask )
-        //self.gLog(msg: "Fyi: queueGETStringURI TaskUUID: (\(myUUID): {\(u)}")
-        
-        return myUUID
     }  //func queueGETStringURI( u : String)
     
     //***************************************************************
     //***************        func queuePOSTStringURI( u : String)
     //***************************************************************
-    func queuePOSTStringURI( t : String, u : String, o: Any ) -> UUID {
+    func queuePOSTStringURI( t : String, u : String, o: Any ) {
         
         let myUUID = UUID()
         let myTask : CallTask = CallTask(   UsersTag                      : t,
@@ -222,14 +219,12 @@ class CallHandler {
                                             WithJSONObject                : o)
         
         queueRESTTask( theTask : myTask )
-        
-        return myUUID
     }  //func queuePOSTStringURI( u : String)
     
     //***************************************************************
     //***************        func queuePUTStringURI( u : String)
     //***************************************************************
-    func queuePUTStringURI( t : String, u : String, o: Any ) -> UUID {
+    func queuePUTStringURI( t : String, u : String, o: Any ) {
         
         let myUUID = UUID()
         let myTask : CallTask = CallTask(   UsersTag                      : t,
@@ -239,8 +234,6 @@ class CallHandler {
                                             WithJSONObject                : o )
         
         queueRESTTask( theTask : myTask )
-        
-        return myUUID
     }  //func queuePOSTStringURI( u : String)
     
     //***************************************************************

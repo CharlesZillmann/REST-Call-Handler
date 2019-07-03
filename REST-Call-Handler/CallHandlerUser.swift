@@ -356,8 +356,7 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
                                                             m: methodtype.GET,
                                                             h: headers( pairs: [:] ),
                                                             d: databody( items: [] ) )
-        lgCallHandler.queueGETStringURI( t: "",
-                                                      u : myRequest1.renderURI() )
+        lgCallHandler.queueGETStringURI( t: "", u : myRequest1.renderURI() )
         
         //    3    /create          POST        JSON    http://dummy.restapiexample.com/api/v1/create           Create new record in database
         //    Route    Method    Sample Json    Results
