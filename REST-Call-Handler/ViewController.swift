@@ -20,7 +20,7 @@ import UIKit
 //*******************************************************************************************
 //*******************************************************************************************
 class ViewController : UIViewController, gMsgLogDelegate {
-    var lgCallHandlerUser                   : CallHandlerUser?          = CallHandlerUser()
+    var lgCallGroupUser                   : CallGroupUser?          = CallGroupUser()
     
     @IBOutlet weak var callGroupProgress    : GroupProgressIndicator!
     @IBOutlet weak var callsTableView       : UITableView!
@@ -57,10 +57,10 @@ class ViewController : UIViewController, gMsgLogDelegate {
         callsTableView.dataSource                   = self
         callsTableView.delegate                     = self
         
-        lgCallHandlerUser?.lgCallStateUIDelegate    = self
-        lgCallHandlerUser?.lgProgressIndicator      = callGroupProgress
-        lgCallHandlerUser?.QueueFailingTestCalls()
-        lgCallHandlerUser?.QueuePassingTestCalls()
+        lgCallGroupUser?.lgCallStateUIDelegate    = self
+        lgCallGroupUser?.lgProgressIndicator      = callGroupProgress
+        lgCallGroupUser?.QueueFailingTestCalls()
+        lgCallGroupUser?.QueuePassingTestCalls()
         
         gMsgLog.ClearLog()
         btnLog.title = "Log(0)"
@@ -73,9 +73,9 @@ class ViewController : UIViewController, gMsgLogDelegate {
         gMsgLog.ClearLog()
         btnLog.title = "Log(0)"
 
-        lgCallHandlerUser?.reset()
-        lgCallHandlerUser?.QueueFailingTestCalls()
-        lgCallHandlerUser?.QueuePassingTestCalls()
+        lgCallGroupUser?.reset()
+        lgCallGroupUser?.QueueFailingTestCalls()
+        lgCallGroupUser?.QueuePassingTestCalls()
         callsTableView.reloadData()
     }  // @IBAction func btnReset(_ sender: Any)
     
@@ -84,12 +84,12 @@ class ViewController : UIViewController, gMsgLogDelegate {
     //***************************************************************
     @IBAction func btnRun(_ sender: Any) {
         
-        if let myCallHandler = lgCallHandlerUser {
+        if let myCallGroup = lgCallGroupUser {
             gMsgLog.ClearLog()
             btnLog.title = "Log(0)"
 
-            myCallHandler.MakeCalls()
-        }  // if let myCallHandler = callHandler
+            myCallGroup.MakeCalls()
+        }  // if let myCallGroup = CallGroup
         
     }  // @IBAction func btnRun(_ sender: Any)
     
@@ -122,7 +122,7 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
     //***************        func tableView numberOfRowsInSection
     //***************************************************************
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return lgCallHandlerUser?.queuedCallsCount() ?? 0
+        return lgCallGroupUser?.queuedCallsCount() ?? 0
     }  // func tableView numberOfRowsInSection
     
     //***************************************************************
@@ -134,14 +134,14 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
 
         let myCell  : CallTableViewCell = tableView.dequeueReusableCell( withIdentifier: "QueuedCallCell", for: indexPath ) as! CallTableViewCell
         
-        if let myUUID : UUID = lgCallHandlerUser?.queuedCallsUUID( index : indexPath.row ) {
+        if let myUUID : UUID = lgCallGroupUser?.queuedCallsUUID( index : indexPath.row ) {
             
-            if let myCallTask = lgCallHandlerUser?.queuedCallTaskforUUID( uuid : myUUID ) {
+            if let myCallTask = lgCallGroupUser?.queuedCallTaskforUUID( uuid : myUUID ) {
                 myEndpoint  = myCallTask.Endpoint
                 myTag       = myCallTask.UsersTag ?? ""
                 if myTag == "" { myTag       = "NO USER TAG" }
                 
-                if let myState = lgCallHandlerUser?.queuedCallStateforUUID( uuid : myUUID ) {
+                if let myState = lgCallGroupUser?.queuedCallStateforUUID( uuid : myUUID ) {
                     myCell.SetCallCellState( state : myState )
                 }  // if let myState
                 
@@ -168,11 +168,11 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
 extension ViewController : CallStateUIDelegate {
     
     //***************************************************************
-    //***************            func CallStateUIChange(   index : Int,  uuid : UUID, state  : CallHandler.CallStates )
+    //***************            func CallStateUIChange(   index : Int,  uuid : UUID, state  : CallGroup.CallStates )
     //***************************************************************
-    func CallStateUIChange( uuid : UUID, state  : CallHandler.CallStates ) {
+    func CallStateUIChange( uuid : UUID, state  : CallGroup.CallStates ) {
 
-        if let myIndex = lgCallHandlerUser?.queuedCallIndexforUUID( uuid: uuid ) {
+        if let myIndex = lgCallGroupUser?.queuedCallIndexforUUID( uuid: uuid ) {
         
             if let myCell = callsTableView.cellForRow( at: IndexPath( row : myIndex, section : 0 ) ) as! CallTableViewCell? {
                 myCell.SetCallCellState( state : state )
@@ -180,7 +180,7 @@ extension ViewController : CallStateUIDelegate {
             
         }  // if let myIndex
         
-    }  // func CallStateUIChange(   index : Int,  uuid : UUID, state  : CallHandler.CallStates )
+    }  // func CallStateUIChange(   index : Int,  uuid : UUID, state  : CallGroup.CallStates )
     
 }  // extension ViewController : CallStateUIDelegate
 

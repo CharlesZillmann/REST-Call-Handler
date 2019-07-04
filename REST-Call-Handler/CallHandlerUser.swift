@@ -1,7 +1,7 @@
 /*************************************************************************
  MIT License
  
- Copyright (c) 2019  CallHandlerUser.swift Charles Zillmann charles.zillmann@gmail.com
+ Copyright (c) 2019  CallGroupUser.swift Charles Zillmann charles.zillmann@gmail.com
  
  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
  
@@ -21,25 +21,20 @@ import UIKit
 //*******************************************************************************************
 //*******************************************************************************************
 protocol CallStateUIDelegate : class {
-    func CallStateUIChange( uuid : UUID, state  : CallHandler.CallStates )
+    func CallStateUIChange( uuid : UUID, state  : CallGroup.CallStates )
 }  //  protocol CallStateUIDelegate : class
 
 //*******************************************************************************************
 //*******************************************************************************************
 //*******************************************************************************************
-//***************        class CallHandlerUser : CallQueueUserHooksDelegate
+//***************        class CallGroupUser : CallQueueUserHooksDelegate
 //*******************************************************************************************
 //*******************************************************************************************
 //*******************************************************************************************
-class CallHandlerUser : CallQueueUserHooksDelegate {
-    
-//    struct CallMetaData {
-//        var i : Int
-//        var s : CallHandler.CallStates
-//    }
+class CallGroupUser : CallQueueUserHooksDelegate {
     
     var lgCallStateUIDelegate   : CallStateUIDelegate?              = nil
-    private var lgCallHandler   : CallHandler                       = CallHandler()
+    private var lgCallGroup   : CallGroup                       = CallGroup()
     var lgProgressIndicator     : GroupProgressIndicator?           = nil
     var lgProgressTarget        : Double                            = 0
     var lgProgressActual        : Double                            = 0
@@ -48,7 +43,7 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
     //***************        func reset()
     //***************************************************************
     func reset() {
-        lgCallHandler.resetAll()
+        lgCallGroup.resetAll()
         lgProgressIndicator?.setProgress( percent : 0, withAnimation: false )
         lgProgressTarget = 0
         lgProgressActual = 0
@@ -58,46 +53,46 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
     //***************        func queuedCallsCount() -> Int
     //***************************************************************
     func queuedCallsCount() -> Int {
-        return lgCallHandler.queuedCallsCount()
+        return lgCallGroup.queuedCallsCount()
     }  // func queuedCallsCount() -> Int
     
     //***************************************************************
     //***************        func queuedCallsUUID( index : Int ) -> UUID
     //***************************************************************
     func queuedCallsUUID( index : Int ) -> UUID {
-        return lgCallHandler.queuedCallsUUID( index : index )
+        return lgCallGroup.queuedCallsUUID( index : index )
     }  // func queuedCallsUUID( index : Int ) -> UUID
     
     //***************************************************************
     //***************        func queuedCallIndexforUUID( uuid : UUID ) -> Int?
     //***************************************************************
     func queuedCallIndexforUUID( uuid : UUID ) -> Int? {
-        return lgCallHandler.queuedCallIndexforUUID( uuid : uuid)
+        return lgCallGroup.queuedCallIndexforUUID( uuid : uuid)
     }  // func queuedCallIndexforUUID( uuid : UUID ) -> Int?
     
     //***************************************************************
-    //***************        func queuedCallTaskforUUID( uuid : UUID ) -> CallHandler.CallTask?
+    //***************        func queuedCallTaskforUUID( uuid : UUID ) -> CallGroup.CallTask?
     //***************************************************************
-    func queuedCallTaskforUUID( uuid : UUID ) -> CallHandler.CallTask? {
-        return lgCallHandler.queuedCallTaskforUUID( uuid : uuid )
-    }  // func queuedCallTaskforUUID( uuid : UUID ) -> CallHandler.CallTask?
+    func queuedCallTaskforUUID( uuid : UUID ) -> CallGroup.CallTask? {
+        return lgCallGroup.queuedCallTaskforUUID( uuid : uuid )
+    }  // func queuedCallTaskforUUID( uuid : UUID ) -> CallGroup.CallTask?
     
     //***************************************************************
-    //***************        func GetStateForCall( uuid : UUID ) -> CallHandler.CallStates
+    //***************        func GetStateForCall( uuid : UUID ) -> CallGroup.CallStates
     //***************************************************************
-    func queuedCallStateforUUID( uuid : UUID ) -> CallHandler.CallStates? {
-        return lgCallHandler.queuedCallStateforUUID( uuid : uuid )
-    }  // func GetStateForCall( uuid : UUID ) -> CallHandler.CallStates
+    func queuedCallStateforUUID( uuid : UUID ) -> CallGroup.CallStates? {
+        return lgCallGroup.queuedCallStateforUUID( uuid : uuid )
+    }  // func GetStateForCall( uuid : UUID ) -> CallGroup.CallStates
     
     //***************************************************************
-    //***************        func CallStateChange( calltask  : CallHandler.CallTask, state : CallHandler.CallStates )
+    //***************        func CallStateChange( calltask  : CallGroup.CallTask, state : CallGroup.CallStates )
     //***************************************************************
-    func CallStateChange( calltask  : CallHandler.CallTask, state : CallHandler.CallStates ) {
+    func CallStateChange( calltask  : CallGroup.CallTask, state : CallGroup.CallStates ) {
         
         DispatchQueue.main.async {
             
             self.lgCallStateUIDelegate?.CallStateUIChange( uuid : calltask.TaskUUID , state  : state )
-            if state == CallHandler.CallStates.Complete {
+            if state == CallGroup.CallStates.Complete {
                 self.lgProgressActual += 1
                 let myPct : Int = Int( (self.lgProgressActual / self.lgProgressTarget ) * 100 )
                 self.lgProgressIndicator?.setProgress( percent : myPct , withAnimation    : false )
@@ -106,12 +101,20 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
             
         }  // DispatchQueue.main.async
         
-    }  // func CallStateChange( calltask  : CallHandler.CallTask, state : CallHandler.CallStates )
+    }  // func CallStateChange( calltask  : CallGroup.CallTask, state : CallGroup.CallStates )
     
     //***************************************************************
-    //***************        func OPTIONSCallCompleted(calltask: CallHandler.CallTask, outcomes: CallHandler.OptionsCallOutcomes)
+    //***************        func CallGroupStatesChange()
     //***************************************************************
-    func OPTIONSCallCompleted( calltask : CallHandler.CallTask, outcomes : OptionsCallOutcomes ) {
+    func CallGroupStatesChange() {
+        
+    }  // func CallGroupStatesChange()
+    
+    
+    //***************************************************************
+    //***************        func OPTIONSCallCompleted(calltask: CallGroup.CallTask, outcomes: CallGroup.OptionsCallOutcomes)
+    //***************************************************************
+    func OPTIONSCallCompleted( calltask : CallGroup.CallTask, outcomes : OptionsCallOutcomes ) {
         let myMsg = """
         -----------------------------------------------------
         **FYI: BEGIN OPTIONSCallCompleted \(calltask.TaskUUID)
@@ -122,12 +125,12 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
         gMsgLog.Log( msg: myMsg)
         //updateProgress()
         
-    }  // func OPTIONSCallCompleted(calltask: CallHandler.CallTask, outcomes: CallHandler.OptionsCallOutcomes)
+    }  // func OPTIONSCallCompleted(calltask: CallGroup.CallTask, outcomes: CallGroup.OptionsCallOutcomes)
     
     //***************************************************************
-    //***************        func GETCallCompleted(calltask: CallHandler.CallTask, outcomes: CallHandler.GetCallOutcomes)
+    //***************        func GETCallCompleted(calltask: CallGroup.CallTask, outcomes: CallGroup.GetCallOutcomes)
     //***************************************************************
-    func GETCallCompleted( calltask : CallHandler.CallTask, outcomes : GetCallOutcomes ) {
+    func GETCallCompleted( calltask : CallGroup.CallTask, outcomes : GetCallOutcomes ) {
         let myMsg = """
         -----------------------------------------------------
         **FYI: BEGIN GETCallCompleted \(calltask.TaskUUID)
@@ -138,12 +141,12 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
         gMsgLog.Log( msg: myMsg)
         //updateProgress()
         
-    }  // func GETCallCompleted(calltask: CallHandler.CallTask, outcomes: CallHandler.GetCallOutcomes)
+    }  // func GETCallCompleted(calltask: CallGroup.CallTask, outcomes: CallGroup.GetCallOutcomes)
     
     //***************************************************************
-    //***************        func HEADCallCompleted(calltask: CallHandler.CallTask, outcomes: CallHandler.HeadCallOutcomes)
+    //***************        func HEADCallCompleted(calltask: CallGroup.CallTask, outcomes: CallGroup.HeadCallOutcomes)
     //***************************************************************
-    func HEADCallCompleted( calltask : CallHandler.CallTask, outcomes : HeadCallOutcomes ) {
+    func HEADCallCompleted( calltask : CallGroup.CallTask, outcomes : HeadCallOutcomes ) {
         let myMsg = """
         -----------------------------------------------------
         **FYI: BEGIN HEADCallCompleted \(calltask.TaskUUID)
@@ -154,12 +157,12 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
         gMsgLog.Log( msg: myMsg)
         //updateProgress()
         
-    }  // func HEADCallCompleted(calltask: CallHandler.CallTask, outcomes: CallHandler.HeadCallOutcomes)
+    }  // func HEADCallCompleted(calltask: CallGroup.CallTask, outcomes: CallGroup.HeadCallOutcomes)
     
     //***************************************************************
-    //***************        func POSTCallCompleted(calltask: CallHandler.CallTask, outcomes: CallHandler.PostCallOutcomes)
+    //***************        func POSTCallCompleted(calltask: CallGroup.CallTask, outcomes: CallGroup.PostCallOutcomes)
     //***************************************************************
-    func POSTCallCompleted( calltask : CallHandler.CallTask, outcomes : PostCallOutcomes ) {
+    func POSTCallCompleted( calltask : CallGroup.CallTask, outcomes : PostCallOutcomes ) {
         let myMsg = """
         **FYI: BEGIN POSTCallCompleted \(calltask.TaskUUID)
         \(outcomes.Summary())
@@ -169,12 +172,12 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
         gMsgLog.Log( msg: myMsg)
         //updateProgress()
         
-    }  // func POSTCallCompleted(calltask: CallHandler.CallTask, outcomes: CallHandler.PostCallOutcomes)
+    }  // func POSTCallCompleted(calltask: CallGroup.CallTask, outcomes: CallGroup.PostCallOutcomes)
     
     //***************************************************************
-    //***************        func PUTCallCompleted(calltask: CallHandler.CallTask, outcomes: CallHandler.PutCallOutcomes)
+    //***************        func PUTCallCompleted(calltask: CallGroup.CallTask, outcomes: CallGroup.PutCallOutcomes)
     //***************************************************************
-    func PUTCallCompleted(calltask: CallHandler.CallTask, outcomes: PutCallOutcomes) {
+    func PUTCallCompleted(calltask: CallGroup.CallTask, outcomes: PutCallOutcomes) {
         let myMsg = """
         **FYI: BEGIN PUTCallCompleted \(calltask.TaskUUID)
         \(outcomes.Summary())
@@ -184,12 +187,12 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
         gMsgLog.Log( msg: myMsg)
         //updateProgress()
         
-    }  // func PUTCallCompleted(calltask: CallHandler.CallTask, outcomes: CallHandler.PutCallOutcomes)
+    }  // func PUTCallCompleted(calltask: CallGroup.CallTask, outcomes: CallGroup.PutCallOutcomes)
     
     //***************************************************************
-    //***************        func PATCHCallCompleted(calltask: CallHandler.CallTask, outcomes: CallHandler.PatchCallOutcomes)
+    //***************        func PATCHCallCompleted(calltask: CallGroup.CallTask, outcomes: CallGroup.PatchCallOutcomes)
     //***************************************************************
-    func PATCHCallCompleted( calltask : CallHandler.CallTask, outcomes : PatchCallOutcomes ) {
+    func PATCHCallCompleted( calltask : CallGroup.CallTask, outcomes : PatchCallOutcomes ) {
         let myMsg = """
         **FYI: BEGIN PATCHCallCompleted \(calltask.TaskUUID)
         \(outcomes.Summary())
@@ -198,12 +201,12 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
         """
         gMsgLog.Log( msg: myMsg)
         //updateProgress()
-    }  // func PATCHCallCompleted(calltask: CallHandler.CallTask, outcomes: CallHandler.PatchCallOutcomes)
+    }  // func PATCHCallCompleted(calltask: CallGroup.CallTask, outcomes: CallGroup.PatchCallOutcomes)
     
     //***************************************************************
-    //***************        func DELETECallCompleted(calltask: CallHandler.CallTask, outcomes: CallHandler.DeleteCallOutcomes)
+    //***************        func DELETECallCompleted(calltask: CallGroup.CallTask, outcomes: CallGroup.DeleteCallOutcomes)
     //***************************************************************
-    func DELETECallCompleted( calltask: CallHandler.CallTask, outcomes: DeleteCallOutcomes ) {
+    func DELETECallCompleted( calltask: CallGroup.CallTask, outcomes: DeleteCallOutcomes ) {
         let myMsg = """
         -----------------------------------------------------
         **FYI: BEGIN DELETECallCompleted \(calltask.TaskUUID)
@@ -213,12 +216,12 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
         """
         gMsgLog.Log( msg: myMsg)
         //updateProgress()
-    }  // func DELETECallCompleted(calltask: CallHandler.CallTask, outcomes: CallHandler.DeleteCallOutcomes)
+    }  // func DELETECallCompleted(calltask: CallGroup.CallTask, outcomes: CallGroup.DeleteCallOutcomes)
     
     //***************************************************************
-    //***************        func UNDEFCallCompleted(calltask: CallHandler.CallTask, outcomes: CallHandler.UndefCallOutcomes)
+    //***************        func UNDEFCallCompleted(calltask: CallGroup.CallTask, outcomes: CallGroup.UndefCallOutcomes)
     //***************************************************************
-    func UNDEFCallCompleted( calltask : CallHandler.CallTask, outcomes : UndefCallOutcomes ) {
+    func UNDEFCallCompleted( calltask : CallGroup.CallTask, outcomes : UndefCallOutcomes ) {
         let myMsg = """
         -----------------------------------------------------
         **FYI: BEGIN UNDEFCallCompleted \(calltask.TaskUUID)
@@ -229,47 +232,47 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
         gMsgLog.Log( msg: myMsg)
         //updateProgress()
         
-    }  // func UNDEFCallCompleted(calltask: CallHandler.CallTask, outcomes: CallHandler.UndefCallOutcomes)
+    }  // func UNDEFCallCompleted(calltask: CallGroup.CallTask, outcomes: CallGroup.UndefCallOutcomes)
     
     //***************************************************************
-    //***************        func AllCallsCompleted(callhandler: CallHandler)
+    //***************        func AllCallsCompleted(CallGroup: CallGroup)
     //***************************************************************
-    func AllCallsCompleted( callhandler: CallHandler ) {
+    func AllCallsCompleted( CallGroup: CallGroup ) {
         let myMsg = """
         -----------------------------------------------------
-        **FYI: AllCallsCompleted ( \(callhandler.completedCallsCount()) of \(callhandler.queuedCallsCount()) )
+        **FYI: AllCallsCompleted ( \(CallGroup.completedCallsCount()) of \(CallGroup.queuedCallsCount()) )
         -----------------------------------------------------
         """
         
         gMsgLog.Log( msg: myMsg)
         //updateProgress( isComplete : true )
-    }  // func AllCallsCompleted(callhandler: CallHandler)
+    }  // func AllCallsCompleted(CallGroup: CallGroup)
     
     //***************************************************************
     //***************        func MakeCalls()
     //***************************************************************
     func MakeCalls( serial : Bool = true) {
-        lgCallHandler.resetCompleted()
+        lgCallGroup.resetCompleted()
         
         lgProgressTarget = Double( queuedCallsCount() )
         lgProgressActual = 0
         
-        lgCallHandler.lgCallQueueUserHooksDelegate                  = self
+        lgCallGroup.lgCallQueueUserHooksDelegate                  = self
         
         print("************ INITIAL QUEUE BEGIN *************")
-        lgCallHandler.queuedCallDump()
+        lgCallGroup.queuedCallDump()
         print("************ INITIAL QUEUE END *************")
 
         if serial {
-            lgCallHandler.executeCallsSerially()
+            lgCallGroup.executeCallsSerially()
         } else {
-            lgCallHandler.executeCallsConcurrently()
+            lgCallGroup.executeCallsConcurrently()
         } //if serial
         
     }  // func MakeCalls()
     
     //***************************************************************
-    //***************        func QueueFailingTestCalls( callhandler : CallHandler )
+    //***************        func QueueFailingTestCalls( CallGroup : CallGroup )
     //***************************************************************
     func QueueFailingTestCalls() {
         
@@ -287,7 +290,7 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
                                                                    h: headers(  pairs : [:] ),
                                                                    d: databody( items : [] ) )
         
-        lgCallHandler.queueURIRequest( t : "Generate an error with URL Creation: unsafe character }",
+        lgCallGroup.queueURIRequest( t : "Generate an error with URL Creation: unsafe character }",
                                        r : myErroredRequest1 )
         //Generate an error with myGetCompletionFunc guard error == nil else
         //    Loading a URL's contents might fail because the site might be down (for example), so it might throw an error. This means you need to wrap the call into a do/catch block.
@@ -301,7 +304,7 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
                                                                    h: headers(  pairs : [:] ),
                                                                    d: databody( items : [] ) )
         
-        lgCallHandler.queueURIRequest(  t : "Generate an error with myGetCompletionFunc guard error == nil else",
+        lgCallGroup.queueURIRequest(  t : "Generate an error with myGetCompletionFunc guard error == nil else",
                                         r : myErroredRequest2 )
         
         
@@ -314,7 +317,7 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
                                                                 h: headers( pairs: [:] ),
                                                                 d: databody( items: [] ) )
         
-        lgCallHandler.queueURIRequest( t: "Make a successful HEAD Request",
+        lgCallGroup.queueURIRequest( t: "Make a successful HEAD Request",
                                                     r : myHEADRequest1 )
         
         let myHEADRequest2     : CallRequest     = CallRequest( e: endpoint( s : "https:",
@@ -326,13 +329,13 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
                                                                 h: headers( pairs: [:] ),
                                                                 d: databody( items: [] ) )
         
-        lgCallHandler.queueURIRequest( t: "Make an unsuccessful HEAD Request",
+        lgCallGroup.queueURIRequest( t: "Make an unsuccessful HEAD Request",
                                                     r : myHEADRequest2 )
         
-    }  // func QueueFailingTestCalls( callhandler : CallHandler )
+    }  // func QueueFailingTestCalls( CallGroup : CallGroup )
     
     //***************************************************************
-    //***************        func QueuePassingTestCalls( callhandler : CallHandler )
+    //***************        func QueuePassingTestCalls( CallGroup : CallGroup )
     //***************************************************************
     func QueuePassingTestCalls() {
         
@@ -346,7 +349,7 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
         //    4    /update/{id}     PUT         JSON    http://dummy.restapiexample.com/api/v1/update/21        Update an employee record
         //    5    /delete/{id}     DELETE      JSON    http://dummy.restapiexample.com/api/v1/update/2         Delete an employee record
         
-        //let myCallHandler                           : CallHandler   = CallHandler()
+        //let myCallGroup                           : CallGroup   = CallGroup()
         
         //    1    /employee    GET    JSON    http://dummy.restapiexample.com/api/v1/employees             Get all employee data               Details
         //    #    Route    Method    Sample Json    Results
@@ -360,7 +363,7 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
                                                             m: methodtype.GET,
                                                             h: headers( pairs: [:] ),
                                                             d: databody( items: [] ) )
-        lgCallHandler.queueGETStringURI( t: "", u : myRequest1.renderURI() )
+        lgCallGroup.queueGETStringURI( t: "", u : myRequest1.renderURI() )
         
         //    3    /create          POST        JSON    http://dummy.restapiexample.com/api/v1/create           Create new record in database
         //    Route    Method    Sample Json    Results
@@ -377,7 +380,7 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
         
         let myNewObj                    : [String: Any] = ["name":UUID().uuidString,"salary":"123","age":"23"]
 
-        lgCallHandler.queuePOSTStringURI( t : "", u : myRequest2.renderURI(), o: myNewObj )
+        lgCallGroup.queuePOSTStringURI( t : "", u : myRequest2.renderURI(), o: myNewObj )
         
         let myRequest3     : CallRequest     = CallRequest( e: endpoint( s : "https:",
                                                                          a : authority( user: "", pw: "", h: "dummy.restapiexample.com", p: "" ),
@@ -387,7 +390,7 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
                                                             m: methodtype.GET,
                                                             h: headers( pairs: [:] ),
                                                             d: databody( items: [] ) )
-        lgCallHandler.queueGETStringURI( t: "", u : myRequest3.renderURI() ) 
+        lgCallGroup.queueGETStringURI( t: "", u : myRequest3.renderURI() ) 
         
         //        let myRequest4     : request     = request( e: endpoint( s : "http:",
         //                                                                 a : authority( user: "", pw: "", h: "dummy.restapiexample.com", p: "" ),
@@ -397,17 +400,17 @@ class CallHandlerUser : CallQueueUserHooksDelegate {
         //                                                    m: methodtypes.GET,
         //                                                    h: headers(  pairs : [:] ),
         //                                                    d: databody( items : [] ) )
-        //        lgCallUUIDs.append( myCallHandler.queueURIRequest(  t: "", r : myRequest4 ) )
+        //        lgCallUUIDs.append( myCallGroup.queueURIRequest(  t: "", r : myRequest4 ) )
         
     }
     
-}  // class CallHandlerUser : CallQueueUserHooksDelegate
+}  // class CallGroupUser : CallQueueUserHooksDelegate
 
 //*************************************************************************************************************************
 //*************************************************************************************************************************
 //*************************************************************************************************************************
 //*************************************************************************************************************************
-//******************************************  END CallHandlerUser.swift
+//******************************************  END CallGroupUser.swift
 //*************************************************************************************************************************
 //*************************************************************************************************************************
 //*************************************************************************************************************************

@@ -1,7 +1,7 @@
 /*************************************************************************
  MIT License
  
- Copyright (c) 2019  CallHandler.swift Charles Zillmann charles.zillmann@gmail.com
+ Copyright (c) 2019  CallGroup.swift Charles Zillmann charles.zillmann@gmail.com
  
  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
  
@@ -20,28 +20,29 @@ import Foundation
 //*******************************************************************************************
 //*******************************************************************************************
 protocol CallQueueUserHooksDelegate : class {
-    func CallStateChange(        calltask  : CallHandler.CallTask, state     : CallHandler.CallStates )
+    func CallStateChange(        calltask  : CallGroup.CallTask, state     : CallGroup.CallStates )
+    func CallGroupStatesChange( )
     
-    func OPTIONSCallCompleted(   calltask  : CallHandler.CallTask, outcomes  : OptionsCallOutcomes  )
-    func GETCallCompleted(       calltask  : CallHandler.CallTask, outcomes  : GetCallOutcomes      )
-    func HEADCallCompleted(      calltask  : CallHandler.CallTask, outcomes  : HeadCallOutcomes     )
-    func POSTCallCompleted(      calltask  : CallHandler.CallTask, outcomes  : PostCallOutcomes     )
-    func PUTCallCompleted(       calltask  : CallHandler.CallTask, outcomes  : PutCallOutcomes      )
-    func PATCHCallCompleted(     calltask  : CallHandler.CallTask, outcomes  : PatchCallOutcomes    )
-    func DELETECallCompleted(    calltask  : CallHandler.CallTask, outcomes  : DeleteCallOutcomes   )
-    func UNDEFCallCompleted(     calltask  : CallHandler.CallTask, outcomes  : UndefCallOutcomes    )
+    func OPTIONSCallCompleted(   calltask  : CallGroup.CallTask, outcomes  : OptionsCallOutcomes  )
+    func GETCallCompleted(       calltask  : CallGroup.CallTask, outcomes  : GetCallOutcomes      )
+    func HEADCallCompleted(      calltask  : CallGroup.CallTask, outcomes  : HeadCallOutcomes     )
+    func POSTCallCompleted(      calltask  : CallGroup.CallTask, outcomes  : PostCallOutcomes     )
+    func PUTCallCompleted(       calltask  : CallGroup.CallTask, outcomes  : PutCallOutcomes      )
+    func PATCHCallCompleted(     calltask  : CallGroup.CallTask, outcomes  : PatchCallOutcomes    )
+    func DELETECallCompleted(    calltask  : CallGroup.CallTask, outcomes  : DeleteCallOutcomes   )
+    func UNDEFCallCompleted(     calltask  : CallGroup.CallTask, outcomes  : UndefCallOutcomes    )
     
-    func AllCallsCompleted( callhandler : CallHandler )
+    func AllCallsCompleted( CallGroup : CallGroup )
 }  //  protocol CallQueueUserHooksDelegate : class
 
 //*******************************************************************************************
 //*******************************************************************************************
 //*******************************************************************************************
-//***************        class CallHandler
+//***************        class CallGroup
 //*******************************************************************************************
 //*******************************************************************************************
 //*******************************************************************************************
-class CallHandler {
+class CallGroup {
     //***************************************************************
     //***************        enum CallStates : String
     //***************************************************************
@@ -165,16 +166,16 @@ class CallHandler {
     }  // func queuedCallIndexforUUID( uuid : UUID ) -> Int?
     
     //***************************************************************
-    //***************        func queuedCallStateforUUID( uuid : UUID ) -> CallHandler.CallStates?
+    //***************        func queuedCallStateforUUID( uuid : UUID ) -> CallGroup.CallStates?
     //***************************************************************
-    func queuedCallStateforUUID( uuid : UUID ) -> CallHandler.CallStates? {
+    func queuedCallStateforUUID( uuid : UUID ) -> CallGroup.CallStates? {
         
         if let myIndex = queuedCallIndexforUUID( uuid : uuid ) {
             return lgGeneralCallsStates[ myIndex ]
         }
         
         return nil
-    }  // ffunc queuedCallStateforUUID( uuid : UUID ) -> CallHandler.CallStates?
+    }  // ffunc queuedCallStateforUUID( uuid : UUID ) -> CallGroup.CallStates?
     
     //***************************************************************
     //***************        func queuedCallDump()
@@ -191,9 +192,9 @@ class CallHandler {
     }  // func queuedCallDump()
     
     //***************************************************************
-    //***************        func callStateChange( calltask  : CallHandler.CallTask, state : CallHandler.CallStates  )
+    //***************        func callStateChange( calltask  : CallGroup.CallTask, state : CallGroup.CallStates  )
     //***************************************************************
-    func callStateChange( calltask  : CallHandler.CallTask, state : CallHandler.CallStates  ) {
+    func callStateChange( calltask  : CallGroup.CallTask, state : CallGroup.CallStates  ) {
         
         print("\n\(calltask.TaskUUID.uuidString): \(state.rawValue)")
 
@@ -205,11 +206,12 @@ class CallHandler {
             
             DispatchQueue.main.async {
                 self.lgCallQueueUserHooksDelegate?.CallStateChange( calltask  : calltask, state : state )
+                self.lgCallQueueUserHooksDelegate?.CallGroupStatesChange()
             }  // DispatchQueue.main.async
             
         }  // if let myIndex
         
-    }  // func callStateChange( calltask  : CallHandler.CallTask, state     : CallHandler.CallStates  )
+    }  // func callStateChange( calltask  : CallGroup.CallTask, state     : CallGroup.CallStates  )
     
     //***************************************************************
     //***************        func queueGETStringURI( u : String)
@@ -277,7 +279,7 @@ class CallHandler {
     //***************************************************************
     private func queueRESTTask( theTask : CallTask ) {
         lgGeneralCallsQueue.append( theTask )
-        lgGeneralCallsStates.append( CallHandler.CallStates.Queued )
+        lgGeneralCallsStates.append( CallGroup.CallStates.Queued )
         gMsgLog.Log(msg: "FYI: QUEUED TASK\n\t ID:\t\(theTask.TaskUUID);\n\tTAG:\t\(theTask.UsersTag ?? "");\n\tEP:\t\"\(theTask.Endpoint)\"\n")
     }  //gGeneralRESTCallsQueue.append( theTask )
     
@@ -306,7 +308,7 @@ class CallHandler {
                     
                     self.lgGeneralCallsCompleted[myCompletedTask.TaskUUID] = myCompletedTask
                     
-                    self.callStateChange( calltask  : theCallTask, state : CallHandler.CallStates.Complete )
+                    self.callStateChange( calltask  : theCallTask, state : CallGroup.CallStates.Complete )
                     self.lgSemaphore?.signal() // releasing the resource
                 } //makeGeneralOptionsCall closure for completion
                 
@@ -329,7 +331,7 @@ class CallHandler {
                     
                     self.lgGeneralCallsCompleted[myCompletedTask.TaskUUID] = myCompletedTask
                     
-                    self.callStateChange( calltask  : theCallTask, state : CallHandler.CallStates.Complete )
+                    self.callStateChange( calltask  : theCallTask, state : CallGroup.CallStates.Complete )
                     self.lgSemaphore?.signal() // releasing the resource
                 } //makeGeneralGetCall closure for completion
                 
@@ -352,7 +354,7 @@ class CallHandler {
                     
                     self.lgGeneralCallsCompleted[myCompletedTask.TaskUUID] = myCompletedTask
                     
-                    self.callStateChange( calltask  : theCallTask, state : CallHandler.CallStates.Complete )
+                    self.callStateChange( calltask  : theCallTask, state : CallGroup.CallStates.Complete )
                     self.lgSemaphore?.signal() // releasing the resource
             } //makeGeneralHeadCall closure for completion
                 
@@ -370,7 +372,7 @@ class CallHandler {
                                                                      error      : theError )
                     self.lgGeneralCallsCompleted[myCompletedTask.TaskUUID] = myCompletedTask
                     
-                    self.callStateChange( calltask  : theCallTask, state : CallHandler.CallStates.Complete )
+                    self.callStateChange( calltask  : theCallTask, state : CallGroup.CallStates.Complete )
                     self.lgSemaphore?.signal() // releasing the resource
                 }  //makeGeneralPostCall closure for completion
                 
@@ -388,7 +390,7 @@ class CallHandler {
                                                                      error      : theError )
                     self.lgGeneralCallsCompleted[myCompletedTask.TaskUUID] = myCompletedTask
                     
-                    self.callStateChange( calltask  : theCallTask, state : CallHandler.CallStates.Complete )
+                    self.callStateChange( calltask  : theCallTask, state : CallGroup.CallStates.Complete )
                     self.lgSemaphore?.signal() // releasing the resource
                 }  //makeGeneralPutCall closure for completion
             
@@ -406,7 +408,7 @@ class CallHandler {
                                                                       error      : theError )
                     self.lgGeneralCallsCompleted[myCompletedTask.TaskUUID] = myCompletedTask
                     
-                    self.callStateChange( calltask  : theCallTask, state : CallHandler.CallStates.Complete )
+                    self.callStateChange( calltask  : theCallTask, state : CallGroup.CallStates.Complete )
                     self.lgSemaphore?.signal() // releasing the resource
             }  //makeGeneralPutCall closure for completion
                 
@@ -424,7 +426,7 @@ class CallHandler {
                                                                        error    : theError )
                     self.lgGeneralCallsCompleted[myCompletedTask.TaskUUID] = myCompletedTask
                     
-                    self.callStateChange( calltask  : theCallTask, state : CallHandler.CallStates.Complete )
+                    self.callStateChange( calltask  : theCallTask, state : CallGroup.CallStates.Complete )
                     self.lgSemaphore?.signal() // releasing the resource
                 }  //makeGeneralPostCall closure for completion
                 
@@ -1205,7 +1207,7 @@ class CallHandler {
     func executeCallsSerially() {
         
         executeCallTaskQueueSerially() {
-            self.lgCallQueueUserHooksDelegate?.AllCallsCompleted( callhandler: self )
+            self.lgCallQueueUserHooksDelegate?.AllCallsCompleted( CallGroup: self )
         }  // closure executeRESTCallsQueueSerially()
         
     }  //func executeCallsSerially()
@@ -1216,7 +1218,7 @@ class CallHandler {
     func executeCallsConcurrently() {
         
         executeCallTaskQueueConcurrently() {
-            self.lgCallQueueUserHooksDelegate?.AllCallsCompleted( callhandler: self )
+            self.lgCallQueueUserHooksDelegate?.AllCallsCompleted( CallGroup: self )
         }  // closure executeCallTaskQueueConcurrently()
         
     }  //func executeCallsConcurrently()
@@ -1231,7 +1233,7 @@ class CallHandler {
         
         for myTask in lgGeneralCallsQueue {
             group.enter()
-            self.callStateChange( calltask  : myTask, state : CallHandler.CallStates.Executing )
+            self.callStateChange( calltask  : myTask, state : CallGroup.CallStates.Executing )
             
             executeCallTask( task : myTask ) {
                 group.leave()
@@ -1260,10 +1262,10 @@ class CallHandler {
         lgSemaphore = mySemaphore
         
         for myTask in lgGeneralCallsQueue {
-            self.callStateChange( calltask  : myTask, state : CallHandler.CallStates.Waiting )
+            self.callStateChange( calltask  : myTask, state : CallGroup.CallStates.Waiting )
             self.lgSemaphore?.wait()  // requesting the resource
             
-            self.callStateChange( calltask  : myTask, state : CallHandler.CallStates.Executing )
+            self.callStateChange( calltask  : myTask, state : CallGroup.CallStates.Executing )
 
             myExecutionQueue.async {
                 self.executeCallTask( task : myTask ) {
@@ -1275,13 +1277,13 @@ class CallHandler {
     }  // func executeCallTaskQueueSerially(completionHandler: @escaping (NoteCollection) -> Void)
     
 
-}  // CallHandler
+}  // CallGroup
 
 //*************************************************************************************************************************
 //*************************************************************************************************************************
 //*************************************************************************************************************************
 //*************************************************************************************************************************
-//******************************************  END CallHandler.swift
+//******************************************  END CallGroup.swift
 //*************************************************************************************************************************
 //*************************************************************************************************************************
 //*************************************************************************************************************************

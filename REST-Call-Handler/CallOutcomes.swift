@@ -118,12 +118,12 @@ class CallOutcomes {
     //          CallStartTime -> CallEndTime -> CallProcStartTime -> CallUserProcStartTime -> CallProcEndTime
     // First:   The Call Starts and Ends.
     //          ( So, the call took (CallEndTime - CallStartTime) on the network )
-    // Second:  Processing Starts within the CallHandler Class
-    //          ( So, the CallHandler took (CallUserProcStartTime - CallEndTime) pre-processing the outcome )
-    // Third:   The Call Handler Class Yields Processing to the CallHandlerUser Class via a delegate.
-    //          ( So, the CallHandlerUser took (CallProcEndTime - CallUserProcStartTime) processing the outcome )
-    // Fourth:  The CallHandlerUser Class completes processing and returns control to the call handler where the CallProcEndTime is captured
-    //          ( So, this call is fully done with the async network request, CallHandler outcome pre-processing, CallHandlerUser outcome processing at... CallProcEndTime )
+    // Second:  Processing Starts within the CallGroup Class
+    //          ( So, the CallGroup took (CallUserProcStartTime - CallEndTime) pre-processing the outcome )
+    // Third:   The Call Handler Class Yields Processing to the CallGroupUser Class via a delegate.
+    //          ( So, the CallGroupUser took (CallProcEndTime - CallUserProcStartTime) processing the outcome )
+    // Fourth:  The CallGroupUser Class completes processing and returns control to the call handler where the CallProcEndTime is captured
+    //          ( So, this call is fully done with the async network request, CallGroup outcome pre-processing, CallGroupUser outcome processing at... CallProcEndTime )
     //***************************************************************
     
     var CallStartTime               : timeval           = timeval(tv_sec: 0, tv_usec: 0)        // timestamp for the start of a call

@@ -143,9 +143,9 @@ class CallTableViewCell : UITableViewCell {
     }  //override func prepareForReuse
     
     //***************************************************************
-    //***************            func SetCallCellState( cell : CallTableViewCell, state : CallHandler.CallStates )
+    //***************            func SetCallCellState( cell : CallTableViewCell, state : CallGroup.CallStates )
     //***************************************************************
-    func SetCallCellState( state : CallHandler.CallStates? = nil ) {
+    func SetCallCellState( state : CallGroup.CallStates? = nil ) {
         
         if let myState = state {
             
@@ -194,7 +194,7 @@ class CallTableViewCell : UITableViewCell {
             self.lgStateLabel.textColor =   UIColor.black
         }
         
-    }  // func SetCallCellState( cell : CallTableViewCell, state : CallHandler.CallStates )
+    }  // func SetCallCellState( cell : CallTableViewCell, state : CallGroup.CallStates )
     
     //***************************************************************
     //***************        override func layoutSubviews
