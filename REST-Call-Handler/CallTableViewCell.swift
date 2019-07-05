@@ -229,9 +229,8 @@ class CallTableViewCell : UITableViewCell {
         lgStateLabel.trailingAnchor.constraint  (   equalTo : myCMG.trailingAnchor,         constant: 0   ).isActive = true
 
         lgActivityView.translatesAutoresizingMaskIntoConstraints = false
-        lgActivityView.leadingAnchor.constraint (   equalTo : myCMG.trailingAnchor,         constant: -lgActivityView.frame.width ).isActive = true
-        lgActivityView.topAnchor.constraint     (   equalTo : myCMG.bottomAnchor,           constant: lgActivityView.frame.height ).isActive = true
-        lgActivityView.trailingAnchor.constraint(   equalTo : myCMG.trailingAnchor,         constant: 0     ).isActive = true
+        lgActivityView.topAnchor.constraint     (   equalTo : myCMG.topAnchor,              constant: 0 ).isActive = true
+        lgActivityView.trailingAnchor.constraint(   equalTo : myCMG.trailingAnchor,         constant: 0 ).isActive = true
 
     }  //override func layoutSubviews
     

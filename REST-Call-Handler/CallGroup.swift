@@ -15,13 +15,13 @@ import Foundation
 //*******************************************************************************************
 //*******************************************************************************************
 //*******************************************************************************************
-//***************        protocol CallQueueUserHooksDelegate : class
+//***************        protocol UIDelegate : class
 //*******************************************************************************************
 //*******************************************************************************************
 //*******************************************************************************************
-protocol CallQueueUserHooksDelegate : class {
+protocol UIDelegate : class {
     func CallStateChange(        calltask  : CallGroup.CallTask, state     : CallGroup.CallStates )
-    func CallGroupStatesChange( )
+    func CallGroupStatesChange( text : String )
     
     func OPTIONSCallCompleted(   calltask  : CallGroup.CallTask, outcomes  : OptionsCallOutcomes  )
     func GETCallCompleted(       calltask  : CallGroup.CallTask, outcomes  : GetCallOutcomes      )
@@ -33,7 +33,7 @@ protocol CallQueueUserHooksDelegate : class {
     func UNDEFCallCompleted(     calltask  : CallGroup.CallTask, outcomes  : UndefCallOutcomes    )
     
     func AllCallsCompleted( CallGroup : CallGroup )
-}  //  protocol CallQueueUserHooksDelegate : class
+}  //  protocol UIDelegate : class
 
 //*******************************************************************************************
 //*******************************************************************************************
@@ -91,11 +91,11 @@ class CallGroup {
         
     }  //struct CallTask
     
-    var lgCallQueueUserHooksDelegate    : CallQueueUserHooksDelegate?   = nil                   // Notified after EACH call *and* ALL calls complete
-    private var lgSemaphore             : DispatchSemaphore?            = nil                   // Semaphore for execution
-    private var lgGeneralCallsQueue     : [CallTask]                    = [CallTask]()          // Queue for calls waiting to be executed
-    private var lgGeneralCallsStates    : [CallStates]                  = [CallStates]()        // Arraty for holding State
-    private var lgGeneralCallsCompleted : [UUID : CallTask]             = [UUID : CallTask]()   // Queue for calls that have been completed
+    var lgUIDelegate                    : UIDelegate?           = nil                   // Notified after EACH call *and* ALL calls complete
+    private var lgSemaphore             : DispatchSemaphore?    = nil                   // Semaphore for execution
+    private var lgGeneralCallsQueue     : [CallTask]            = [CallTask]()          // Queue for calls waiting to be executed
+    private var lgGeneralCallsStates    : [CallStates]          = [CallStates]()        // Arraty for holding State
+    private var lgGeneralCallsCompleted : [UUID : CallTask]     = [UUID : CallTask]()   // Queue for calls that have been completed
     
     //***************************************************************
     //***************        func reset()
@@ -172,7 +172,7 @@ class CallGroup {
         
         if let myIndex = queuedCallIndexforUUID( uuid : uuid ) {
             return lgGeneralCallsStates[ myIndex ]
-        }
+        }  //if let myIndex
         
         return nil
     }  // ffunc queuedCallStateforUUID( uuid : UUID ) -> CallGroup.CallStates?
@@ -180,16 +180,15 @@ class CallGroup {
     //***************************************************************
     //***************        func queuedCallDump()
     //***************************************************************
-    func queuedCallDump() {
+    func queuedCallsState() -> String  {
         var myString : String = ""
         
         for ( index, value) in lgGeneralCallsQueue.enumerated() {
             myString += "\(index): \(value.TaskUUID): \(lgGeneralCallsStates[ index ])\n"
         }  // for (_, value) in lgGeneralCallsQueue.enumerated()
         
-        print( myString )
-
-    }  // func queuedCallDump()
+        return myString
+    }  // func queuedCallsState() -> String
     
     //***************************************************************
     //***************        func callStateChange( calltask  : CallGroup.CallTask, state : CallGroup.CallStates  )
@@ -201,12 +200,11 @@ class CallGroup {
         if let myIndex = queuedCallIndexforUUID( uuid : calltask.TaskUUID ) {
             
             lgGeneralCallsStates[ myIndex ] = state
-            
-            queuedCallDump()
+            let myState = self.queuedCallsState()
             
             DispatchQueue.main.async {
-                self.lgCallQueueUserHooksDelegate?.CallStateChange( calltask  : calltask, state : state )
-                self.lgCallQueueUserHooksDelegate?.CallGroupStatesChange()
+                self.lgUIDelegate?.CallStateChange( calltask  : calltask, state : state )
+                self.lgUIDelegate?.CallGroupStatesChange( text : myState )
             }  // DispatchQueue.main.async
             
         }  // if let myIndex
@@ -785,7 +783,7 @@ class CallGroup {
         //***************************************************************
         func myYieldToDelegate() {
             gettimeofday(&myOutcomes.CallUserProcStartTime, nil)
-            lgCallQueueUserHooksDelegate?.OPTIONSCallCompleted( calltask: myCallTask, outcomes: myOutcomes )
+            lgUIDelegate?.OPTIONSCallCompleted( calltask: myCallTask, outcomes: myOutcomes )
             gettimeofday(&myOutcomes.CallProcEndTime , nil)
         }  // NESTED func myYieldToDelegate()
         
@@ -853,7 +851,7 @@ class CallGroup {
         //***************************************************************
         func myYieldToDelegate() {
             gettimeofday(&myOutcomes.CallUserProcStartTime, nil)
-            lgCallQueueUserHooksDelegate?.GETCallCompleted( calltask: myCallTask, outcomes: myOutcomes )
+            lgUIDelegate?.GETCallCompleted( calltask: myCallTask, outcomes: myOutcomes )
             gettimeofday(&myOutcomes.CallProcEndTime , nil)
         }  // NESTED func myYieldToDelegate()
         
@@ -912,7 +910,7 @@ class CallGroup {
         //***************************************************************
         func myYieldToDelegate() {
             gettimeofday(&myOutcomes.CallUserProcStartTime, nil)
-            lgCallQueueUserHooksDelegate?.HEADCallCompleted( calltask: myCallTask, outcomes: myOutcomes )
+            lgUIDelegate?.HEADCallCompleted( calltask: myCallTask, outcomes: myOutcomes )
             gettimeofday(&myOutcomes.CallProcEndTime , nil)
         }  // NESTED func myYieldToDelegate()
         
@@ -975,7 +973,7 @@ class CallGroup {
         //***************************************************************
         func myYieldToDelegate() {
             gettimeofday(&myOutcomes.CallUserProcStartTime, nil)
-            lgCallQueueUserHooksDelegate?.POSTCallCompleted( calltask: myCallTask, outcomes: myOutcomes )
+            lgUIDelegate?.POSTCallCompleted( calltask: myCallTask, outcomes: myOutcomes )
             gettimeofday(&myOutcomes.CallProcEndTime , nil)
         }  // NESTED func myYieldToDelegate()
         
@@ -1038,7 +1036,7 @@ class CallGroup {
         //***************************************************************
         func myYieldToDelegate() {
             gettimeofday(&myOutcomes.CallUserProcStartTime, nil)
-            lgCallQueueUserHooksDelegate?.PUTCallCompleted( calltask: myCallTask, outcomes: myOutcomes )
+            lgUIDelegate?.PUTCallCompleted( calltask: myCallTask, outcomes: myOutcomes )
             gettimeofday(&myOutcomes.CallProcEndTime , nil)
         }  // NESTED func myYieldToDelegate()
         
@@ -1101,7 +1099,7 @@ class CallGroup {
         //***************************************************************
         func myYieldToDelegate() {
             gettimeofday(&myOutcomes.CallUserProcStartTime, nil)
-            lgCallQueueUserHooksDelegate?.PATCHCallCompleted( calltask: myCallTask, outcomes: myOutcomes )
+            lgUIDelegate?.PATCHCallCompleted( calltask: myCallTask, outcomes: myOutcomes )
             gettimeofday(&myOutcomes.CallProcEndTime , nil)
         }  // NESTED func myYieldToDelegate()
         
@@ -1160,7 +1158,7 @@ class CallGroup {
         //***************************************************************
         func myYieldToDelegate() {
             gettimeofday(&myOutcomes.CallUserProcStartTime, nil)
-            lgCallQueueUserHooksDelegate?.DELETECallCompleted( calltask: myCallTask, outcomes: myOutcomes )
+            lgUIDelegate?.DELETECallCompleted( calltask: myCallTask, outcomes: myOutcomes )
             gettimeofday(&myOutcomes.CallProcEndTime , nil)
         }  // NESTED func myYieldToDelegate()
         
@@ -1206,8 +1204,8 @@ class CallGroup {
     //***************************************************************
     func executeCallsSerially() {
         
-        executeCallTaskQueueSerially() {
-            self.lgCallQueueUserHooksDelegate?.AllCallsCompleted( CallGroup: self )
+        executeCallGroupSerially() {
+            self.lgUIDelegate?.AllCallsCompleted( CallGroup: self )
         }  // closure executeRESTCallsQueueSerially()
         
     }  //func executeCallsSerially()
@@ -1217,18 +1215,18 @@ class CallGroup {
     //***************************************************************
     func executeCallsConcurrently() {
         
-        executeCallTaskQueueConcurrently() {
-            self.lgCallQueueUserHooksDelegate?.AllCallsCompleted( CallGroup: self )
-        }  // closure executeCallTaskQueueConcurrently()
+        executeCallGroupConcurrently() {
+            self.lgUIDelegate?.AllCallsCompleted( CallGroup: self )
+        }  // closure executeCallGroupConcurrently()
         
     }  //func executeCallsConcurrently()
     
     //***************************************************************
-    //***************        func executeCallTaskQueueConcurrently(completionHandler: @escaping () -> Void)
+    //***************        func executeCallGroupConcurrently(completionHandler: @escaping () -> Void)
     //***************************************************************
     //DispatchGroup Array Extension
     //DispatchGroup provides a nice and easy way to synchronize a group of asynchronous operations while still remaining asynchronous
-    func executeCallTaskQueueConcurrently(completionHandler: @escaping () -> Void) {
+    func executeCallGroupConcurrently(completionHandler: @escaping () -> Void) {
         let group           : DispatchGroup   = DispatchGroup()
         
         for myTask in lgGeneralCallsQueue {
@@ -1248,11 +1246,11 @@ class CallGroup {
     }  // func loadConcurrently(completionHandler: @escaping (NoteCollection) -> Void)
     
     //***************************************************************
-    //***************        func executeCallTaskQueueSerially(completionHandler: @escaping () -> Void)
+    //***************        func executeCallGroupSerially(completionHandler: @escaping () -> Void)
     //***************************************************************
     //DispatchSemaphore Array Extension
     //DispatchSemaphore provides a way to synchronously wait for a group of asynchronous tasks.
-    func executeCallTaskQueueSerially( completionHandler: @escaping () -> Void) {
+    func executeCallGroupSerially( completionHandler: @escaping () -> Void) {
         
         // We create a new queue to do our work on, since calling wait() on
         // the semaphore will cause it to block the current queue
@@ -1274,7 +1272,7 @@ class CallGroup {
             
         }  // for myTask in gGeneralCallsQueue
         
-    }  // func executeCallTaskQueueSerially(completionHandler: @escaping (NoteCollection) -> Void)
+    }  // func executeCallGroupSerially(completionHandler: @escaping (NoteCollection) -> Void)
     
 
 }  // CallGroup

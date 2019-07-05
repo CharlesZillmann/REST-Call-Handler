@@ -15,7 +15,7 @@
 		84A1DB5D22B5448100AABF0D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 84A1DB5C22B5448100AABF0D /* Assets.xcassets */; };
 		84A1DB6022B5448100AABF0D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84A1DB5E22B5448100AABF0D /* LaunchScreen.storyboard */; };
 		84A1DB8422B5469A00AABF0D /* CallHandlerUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1DB8322B5469A00AABF0D /* CallHandlerUser.swift */; };
-		84A1DB8822B546BA00AABF0D /* CallHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1DB8722B546BA00AABF0D /* CallHandler.swift */; };
+		84A1DB8822B546BA00AABF0D /* CallGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1DB8722B546BA00AABF0D /* CallGroup.swift */; };
 		84A1DB8C22B546D800AABF0D /* CallURIAnatomy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1DB8B22B546D800AABF0D /* CallURIAnatomy.swift */; };
 		84A1DB8E22B569DF00AABF0D /* CallLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1DB8D22B569DF00AABF0D /* CallLog.swift */; };
 		84A1DB9022B5750400AABF0D /* CallOutcomes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1DB8F22B5750400AABF0D /* CallOutcomes.swift */; };
@@ -52,7 +52,7 @@
 		84A1DB6622B5448100AABF0D /* REST-Call-HandlerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "REST-Call-HandlerTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		84A1DB7122B5448100AABF0D /* REST-Call-HandlerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "REST-Call-HandlerUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		84A1DB8322B5469A00AABF0D /* CallHandlerUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallHandlerUser.swift; sourceTree = "<group>"; };
-		84A1DB8722B546BA00AABF0D /* CallHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallHandler.swift; sourceTree = "<group>"; };
+		84A1DB8722B546BA00AABF0D /* CallGroup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallGroup.swift; sourceTree = "<group>"; };
 		84A1DB8B22B546D800AABF0D /* CallURIAnatomy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallURIAnatomy.swift; sourceTree = "<group>"; };
 		84A1DB8D22B569DF00AABF0D /* CallLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallLog.swift; sourceTree = "<group>"; };
 		84A1DB8F22B5750400AABF0D /* CallOutcomes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallOutcomes.swift; sourceTree = "<group>"; };
@@ -108,7 +108,7 @@
 				84A1DB9122B7D9FF00AABF0D /* UserInterface */,
 				84A1DB5522B5448000AABF0D /* AppDelegate.swift */,
 				84A1DB8D22B569DF00AABF0D /* CallLog.swift */,
-				84A1DB8722B546BA00AABF0D /* CallHandler.swift */,
+				84A1DB8722B546BA00AABF0D /* CallGroup.swift */,
 				84A1DB8F22B5750400AABF0D /* CallOutcomes.swift */,
 				84A1DB8322B5469A00AABF0D /* CallHandlerUser.swift */,
 				84A1DB8B22B546D800AABF0D /* CallURIAnatomy.swift */,
@@ -271,7 +271,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				84A1DB9022B5750400AABF0D /* CallOutcomes.swift in Sources */,
-				84A1DB8822B546BA00AABF0D /* CallHandler.swift in Sources */,
+				84A1DB8822B546BA00AABF0D /* CallGroup.swift in Sources */,
 				8434BE3622C6A4D100C98557 /* LogViewController.swift in Sources */,
 				8400799522C0A5E9002F099D /* CallTableViewCell.swift in Sources */,
 				84A1DB8C22B546D800AABF0D /* CallURIAnatomy.swift in Sources */,

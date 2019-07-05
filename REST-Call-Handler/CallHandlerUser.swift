@@ -27,14 +27,14 @@ protocol CallStateUIDelegate : class {
 //*******************************************************************************************
 //*******************************************************************************************
 //*******************************************************************************************
-//***************        class CallGroupUser : CallQueueUserHooksDelegate
+//***************        class CallGroupUser : UIDelegate
 //*******************************************************************************************
 //*******************************************************************************************
 //*******************************************************************************************
-class CallGroupUser : CallQueueUserHooksDelegate {
+class CallGroupUser : UIDelegate {
     
     var lgCallStateUIDelegate   : CallStateUIDelegate?              = nil
-    private var lgCallGroup   : CallGroup                       = CallGroup()
+    private var lgCallGroup     : CallGroup                         = CallGroup()
     var lgProgressIndicator     : GroupProgressIndicator?           = nil
     var lgProgressTarget        : Double                            = 0
     var lgProgressActual        : Double                            = 0
@@ -85,6 +85,13 @@ class CallGroupUser : CallQueueUserHooksDelegate {
     }  // func GetStateForCall( uuid : UUID ) -> CallGroup.CallStates
     
     //***************************************************************
+    //***************        func func queueURIRequest( r : request)
+    //***************************************************************
+    func queueURIRequest( t : String, r : CallRequest) {
+        lgCallGroup.queueURIRequest( t : t , r : r )
+    }  //func queueURIRequest( r : request)
+    
+    //***************************************************************
     //***************        func CallStateChange( calltask  : CallGroup.CallTask, state : CallGroup.CallStates )
     //***************************************************************
     func CallStateChange( calltask  : CallGroup.CallTask, state : CallGroup.CallStates ) {
@@ -106,8 +113,8 @@ class CallGroupUser : CallQueueUserHooksDelegate {
     //***************************************************************
     //***************        func CallGroupStatesChange()
     //***************************************************************
-    func CallGroupStatesChange() {
-        
+    func CallGroupStatesChange( text : String) {
+        print( text )
     }  // func CallGroupStatesChange()
     
     
@@ -257,10 +264,10 @@ class CallGroupUser : CallQueueUserHooksDelegate {
         lgProgressTarget = Double( queuedCallsCount() )
         lgProgressActual = 0
         
-        lgCallGroup.lgCallQueueUserHooksDelegate                  = self
+        lgCallGroup.lgUIDelegate                  = self
         
         print("************ INITIAL QUEUE BEGIN *************")
-        lgCallGroup.queuedCallDump()
+        print( lgCallGroup.queuedCallsState() )
         print("************ INITIAL QUEUE END *************")
 
         if serial {
@@ -271,140 +278,8 @@ class CallGroupUser : CallQueueUserHooksDelegate {
         
     }  // func MakeCalls()
     
-    //***************************************************************
-    //***************        func QueueFailingTestCalls( CallGroup : CallGroup )
-    //***************************************************************
-    func QueueFailingTestCalls() {
-        
-        //Generate an error with URL Creation
-        //    Creating a URL might fail if you pass a bad site, so you need to unwrap its optional return value.
-        //    Loading a URL's contents might fail because the site might be down (for example), so it might throw an error. This means you need to wrap the call into a do/catch block.
-        //          -1003 "A server with the specified hostname could not be found."
-        //Generate an error with URL Creation
-        let myErroredRequest1     : CallRequest     = CallRequest( e: endpoint( s : "https:",
-                                                                                a : authority( user: "", pw: "", h: "dummy.restapiexample.com", p: "" ),
-                                                                                r : "/api/v1/un}safe/1",
-                                                                                p : path( v : [:],
-                                                                                          q : [:] ) ),
-                                                                   m: methodtype.GET,
-                                                                   h: headers(  pairs : [:] ),
-                                                                   d: databody( items : [] ) )
-        
-        lgCallGroup.queueURIRequest( t : "Generate an error with URL Creation: unsafe character }",
-                                       r : myErroredRequest1 )
-        //Generate an error with myGetCompletionFunc guard error == nil else
-        //    Loading a URL's contents might fail because the site might be down (for example), so it might throw an error. This means you need to wrap the call into a do/catch block.
-        //          -1003 "A server with the specified hostname could not be found."
-        let myErroredRequest2     : CallRequest     = CallRequest( e: endpoint( s : "https:",
-                                                                                a : authority( user: "", pw: "", h: "dummy.czx.com", p: "" ),
-                                                                                r : "/api/v1/employee/1",
-                                                                                p : path( v : [:],
-                                                                                          q : [:] ) ),
-                                                                   m: methodtype.GET,
-                                                                   h: headers(  pairs : [:] ),
-                                                                   d: databody( items : [] ) )
-        
-        lgCallGroup.queueURIRequest(  t : "Generate an error with myGetCompletionFunc guard error == nil else",
-                                        r : myErroredRequest2 )
-        
-        
-        let myHEADRequest1     : CallRequest     = CallRequest( e: endpoint( s : "https:",
-                                                                             a : authority( user: "", pw: "", h: "dummy.restapiexample.com", p: "" ),
-                                                                             r : "/api/v1/employees",
-                                                                             p : path( v : [:],
-                                                                                       q : [:] ) ),
-                                                                m: methodtype.HEAD,
-                                                                h: headers( pairs: [:] ),
-                                                                d: databody( items: [] ) )
-        
-        lgCallGroup.queueURIRequest( t: "Make a successful HEAD Request",
-                                                    r : myHEADRequest1 )
-        
-        let myHEADRequest2     : CallRequest     = CallRequest( e: endpoint( s : "https:",
-                                                                             a : authority( user: "", pw: "", h: "dummy.restapiexample.com", p: "" ),
-                                                                             r : "/api/v1/employeet",
-                                                                             p : path( v : [:],
-                                                                                       q : [:] ) ),
-                                                                m: methodtype.HEAD,
-                                                                h: headers( pairs: [:] ),
-                                                                d: databody( items: [] ) )
-        
-        lgCallGroup.queueURIRequest( t: "Make an unsuccessful HEAD Request",
-                                                    r : myHEADRequest2 )
-        
-    }  // func QueueFailingTestCalls( CallGroup : CallGroup )
-    
-    //***************************************************************
-    //***************        func QueuePassingTestCalls( CallGroup : CallGroup )
-    //***************************************************************
-    func QueuePassingTestCalls() {
-        
-        
-        //    http://dummy.restapiexample.com/
-        //
-        //    #    Route            Method    T ype    Full route                                               Description
-        //    1    /employee        GET         JSON    http://dummy.restapiexample.com/api/v1/employees        Get all employee data
-        //    2    /employee/{id}   GET         JSON    http://dummy.restapiexample.com/api/v1/employee/1       Get a single employee data
-        //    3    /create          POST        JSON    http://dummy.restapiexample.com/api/v1/create           Create new record in database
-        //    4    /update/{id}     PUT         JSON    http://dummy.restapiexample.com/api/v1/update/21        Update an employee record
-        //    5    /delete/{id}     DELETE      JSON    http://dummy.restapiexample.com/api/v1/update/2         Delete an employee record
-        
-        //let myCallGroup                           : CallGroup   = CallGroup()
-        
-        //    1    /employee    GET    JSON    http://dummy.restapiexample.com/api/v1/employees             Get all employee data               Details
-        //    #    Route    Method    Sample Json    Results
-        //    1    /employees    GET    -
-        // [{"id":"1","employee_name":"","employee_salary":"0","employee_age":"0","profile_image":""},{"id":"2","employee_name":"","employee_salary":"0","employee_age":"0","profile_image":""}]
-        let myRequest1     : CallRequest     = CallRequest( e: endpoint( s : "https:",
-                                                                         a : authority( user: "", pw: "", h: "dummy.restapiexample.com", p: "" ),
-                                                                         r : "/api/v1/employees",
-                                                                         p : path( v : [:],
-                                                                                   q : [:] ) ),
-                                                            m: methodtype.GET,
-                                                            h: headers( pairs: [:] ),
-                                                            d: databody( items: [] ) )
-        lgCallGroup.queueGETStringURI( t: "", u : myRequest1.renderURI() )
-        
-        //    3    /create          POST        JSON    http://dummy.restapiexample.com/api/v1/create           Create new record in database
-        //    Route    Method    Sample Json    Results
-        //    /create    POST    {"name":"test","salary":"123","age":"23"}
-        //    {"name":"test","salary":"123","age":"23","id":"719"}
-        let myRequest2     : CallRequest     = CallRequest( e: endpoint( s : "https:",
-                                                                         a : authority( user: "", pw: "", h: "dummy.restapiexample.com", p: "" ),
-                                                                         r : "/api/v1/create",
-                                                                         p : path( v : [:],
-                                                                                   q : [:] ) ),
-                                                            m: methodtype.POST,
-                                                            h: headers( pairs: [:] ),
-                                                            d: databody( items: [] ) )
-        
-        let myNewObj                    : [String: Any] = ["name":UUID().uuidString,"salary":"123","age":"23"]
 
-        lgCallGroup.queuePOSTStringURI( t : "", u : myRequest2.renderURI(), o: myNewObj )
-        
-        let myRequest3     : CallRequest     = CallRequest( e: endpoint( s : "https:",
-                                                                         a : authority( user: "", pw: "", h: "dummy.restapiexample.com", p: "" ),
-                                                                         r : "/api/v1/employees",
-                                                                         p : path( v : [:],
-                                                                                   q : [:] ) ),
-                                                            m: methodtype.GET,
-                                                            h: headers( pairs: [:] ),
-                                                            d: databody( items: [] ) )
-        lgCallGroup.queueGETStringURI( t: "", u : myRequest3.renderURI() ) 
-        
-        //        let myRequest4     : request     = request( e: endpoint( s : "http:",
-        //                                                                 a : authority( user: "", pw: "", h: "dummy.restapiexample.com", p: "" ),
-        //                                                                 r : "/api/v1/employee/1",
-        //                                                                 p : path( v : [:],
-        //                                                                           q : [:] ) ),
-        //                                                    m: methodtypes.GET,
-        //                                                    h: headers(  pairs : [:] ),
-        //                                                    d: databody( items : [] ) )
-        //        lgCallUUIDs.append( myCallGroup.queueURIRequest(  t: "", r : myRequest4 ) )
-        
-    }
-    
-}  // class CallGroupUser : CallQueueUserHooksDelegate
+}  // class CallGroupUser : UIDelegate
 
 //*************************************************************************************************************************
 //*************************************************************************************************************************
